@@ -1,0 +1,43 @@
+@startuml
+!theme plain
+title Student Use Cases - Shared Mobility System
+
+left to right direction
+usecase "Login Admin" as LoginAdmin
+usecase "Logout Admin" as LogoutAdmin
+usecase "Gestisci Prenotazioni" as GestisciPrenotazioni
+usecase "Aggiungi Prenotazione" as AggiungiPrenotazione
+usecase "Modifica Prenotazione Admin" as ModificaPrenotazioneAdmin
+usecase "Elimina Prenotazione" as EliminaPrenotazione
+usecase "Gestisci Veicoli" as GestisciVeicoli
+usecase "Aggiungi Veicolo" as AggiungiVeicolo
+usecase "Modifica Veicolo" as ModificaVeicolo
+usecase "Elimina Veicolo" as EliminaVeicolo
+usecase "Gestisci Utenti" as GestisciUtenti
+usecase "Modifica Anagrafica Utente" as ModificaAnagraficaUtente
+usecase "Elimina Utente" as EliminaUtente
+usecase "Visualizza Utenti" as VisualizzaUtenti
+usecase "Genera Resoconto Settimanale" as GeneraResocontoSettimanale
+usecase "Visualizza Log Viaggi" as VisualizzaLogViaggi
+usecase "Esporta Dati" as EsportaDati
+
+Admin -- LoginAdmin
+Admin -- LogoutAdmin
+LoginAdmin --> GestisciPrenotazioni
+LoginAdmin --> GestisciVeicoli
+LoginAdmin --> GestisciUtenti
+LoginAdmin --> GeneraResocontoSettimanale
+LoginAdmin --> GeneraResocontoMensile
+LoginAdmin --> VisualizzaLogViaggi
+GestisciPrenotazioni --> AggiungiPrenotazione
+GestisciPrenotazioni --> ModificaPrenotazioneAdmin
+GestisciPrenotazioni --> EliminaPrenotazione
+GestisciVeicoli --> AggiungiVeicolo
+GestisciVeicoli --> ModificaVeicolo
+GestisciVeicoli --> EliminaVeicolo
+GestisciUtenti --> VisualizzaUtenti
+GestisciUtenti --> ModificaAnagraficaUtente
+GestisciUtenti --> EliminaUtente
+LoginAdmin --> VisualizzaStatisticheSistema
+VisualizzaLogViaggi --> EsportaDati
+@enduml
