@@ -10318,6 +10318,517 @@
 					]
 				}
 			]
+		},
+		{
+			"_type": "UMLModel",
+			"_id": "AAAAAAGXaLk25Ah703I=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "Model3",
+			"ownedElements": [
+				{
+					"_type": "UMLActor",
+					"_id": "AAAAAAGXaLmrHwicAlY=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Studente",
+					"ownedElements": [
+						{
+							"_type": "UMLAssociation",
+							"_id": "AAAAAAGXaS2DeDaJSgw=",
+							"_parent": {
+								"$ref": "AAAAAAGXaLmrHwicAlY="
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaS2DeDaKfLo=",
+								"_parent": {
+									"$ref": "AAAAAAGXaS2DeDaJSgw="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaLmrHwicAlY="
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaS2DeDaLDsQ=",
+								"_parent": {
+									"$ref": "AAAAAAGXaS2DeDaJSgw="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaSwJlDXxAwo="
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "AAAAAAGXaS2mhTga4GU=",
+							"_parent": {
+								"$ref": "AAAAAAGXaLmrHwicAlY="
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaS2mhTgbwzE=",
+								"_parent": {
+									"$ref": "AAAAAAGXaS2mhTga4GU="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaLmrHwicAlY="
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaS2mhTgc1EQ=",
+								"_parent": {
+									"$ref": "AAAAAAGXaS2mhTga4GU="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaSl4uzU2aBY="
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "AAAAAAGXaS3d7D60jw8=",
+							"_parent": {
+								"$ref": "AAAAAAGXaLmrHwicAlY="
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaS3d7D614tg=",
+								"_parent": {
+									"$ref": "AAAAAAGXaS3d7D60jw8="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaLmrHwicAlY="
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaS3d7D628MM=",
+								"_parent": {
+									"$ref": "AAAAAAGXaS3d7D60jw8="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaSzrATYnu0c="
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "AAAAAAGXaS3tvEEEt+E=",
+							"_parent": {
+								"$ref": "AAAAAAGXaLmrHwicAlY="
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaS3tvEEFVFs=",
+								"_parent": {
+									"$ref": "AAAAAAGXaS3tvEEEt+E="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaLmrHwicAlY="
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaS3tvEEGuhg=",
+								"_parent": {
+									"$ref": "AAAAAAGXaS3tvEEEt+E="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaS1GrTZc9u8="
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "AAAAAAGXaTKuRKtM5pk=",
+							"_parent": {
+								"$ref": "AAAAAAGXaLmrHwicAlY="
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaTKuRKtN7MA=",
+								"_parent": {
+									"$ref": "AAAAAAGXaTKuRKtM5pk="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaLmrHwicAlY="
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaTKuRKtO/+g=",
+								"_parent": {
+									"$ref": "AAAAAAGXaTKuRKtM5pk="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaLnFtgjFjfI="
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "AAAAAAGXaTMOQbgX99M=",
+							"_parent": {
+								"$ref": "AAAAAAGXaLmrHwicAlY="
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaTMOQbgYP7U=",
+								"_parent": {
+									"$ref": "AAAAAAGXaTMOQbgX99M="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaLmrHwicAlY="
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaTMOQbgZ1p0=",
+								"_parent": {
+									"$ref": "AAAAAAGXaTMOQbgX99M="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaSmTNTVkHO4="
+								}
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaLnFtgjFjfI=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Login"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaSl4uzU2aBY=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Registrazione",
+					"ownedElements": [
+						{
+							"_type": "UMLInclude",
+							"_id": "AAAAAAGXaTeVowf4Jzk=",
+							"_parent": {
+								"$ref": "AAAAAAGXaSl4uzU2aBY="
+							},
+							"source": {
+								"$ref": "AAAAAAGXaSl4uzU2aBY="
+							},
+							"target": {
+								"$ref": "AAAAAAGXaTcwOgGB9+0="
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaSmTNTVkHO4=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Gestione Prenotazioni"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaSm3VTWSlWc=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Modifica Prenotazione",
+					"ownedElements": [
+						{
+							"_type": "UMLInclude",
+							"_id": "AAAAAAGXaS8Wa2IZN5o=",
+							"_parent": {
+								"$ref": "AAAAAAGXaSm3VTWSlWc="
+							},
+							"source": {
+								"$ref": "AAAAAAGXaSm3VTWSlWc="
+							},
+							"target": {
+								"$ref": "AAAAAAGXaS6VFFWH2JE="
+							}
+						},
+						{
+							"_type": "UMLInclude",
+							"_id": "AAAAAAGXaS8/nGsyQ54=",
+							"_parent": {
+								"$ref": "AAAAAAGXaSm3VTWSlWc="
+							},
+							"source": {
+								"$ref": "AAAAAAGXaSm3VTWSlWc="
+							},
+							"target": {
+								"$ref": "AAAAAAGXaS6xdlaHPEk="
+							}
+						},
+						{
+							"_type": "UMLExtend",
+							"_id": "AAAAAAGXaTDCnJl6Tng=",
+							"_parent": {
+								"$ref": "AAAAAAGXaSm3VTWSlWc="
+							},
+							"source": {
+								"$ref": "AAAAAAGXaSm3VTWSlWc="
+							},
+							"target": {
+								"$ref": "AAAAAAGXaSmTNTVkHO4="
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaSnRUDXArA4=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Elimina Prenotazione",
+					"ownedElements": [
+						{
+							"_type": "UMLExtend",
+							"_id": "AAAAAAGXaTCmCJTlL6Y=",
+							"_parent": {
+								"$ref": "AAAAAAGXaSnRUDXArA4="
+							},
+							"source": {
+								"$ref": "AAAAAAGXaSnRUDXArA4="
+							},
+							"target": {
+								"$ref": "AAAAAAGXaSmTNTVkHO4="
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaSwJlDXxAwo=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Logout"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaSzrATYnu0c=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Vedi Prenotazione"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaS1GrTZc9u8=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "UseCase1"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaS55r1SHeqk=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Nuova Prenotazione",
+					"ownedElements": [
+						{
+							"_type": "UMLInclude",
+							"_id": "AAAAAAGXaS/KiYLNgTQ=",
+							"_parent": {
+								"$ref": "AAAAAAGXaS55r1SHeqk="
+							},
+							"source": {
+								"$ref": "AAAAAAGXaS55r1SHeqk="
+							},
+							"target": {
+								"$ref": "AAAAAAGXaS7OoVeHxtA="
+							}
+						},
+						{
+							"_type": "UMLInclude",
+							"_id": "AAAAAAGXaTAhP4gW8cQ=",
+							"_parent": {
+								"$ref": "AAAAAAGXaS55r1SHeqk="
+							},
+							"source": {
+								"$ref": "AAAAAAGXaS55r1SHeqk="
+							},
+							"target": {
+								"$ref": "AAAAAAGXaS6VFFWH2JE="
+							}
+						},
+						{
+							"_type": "UMLInclude",
+							"_id": "AAAAAAGXaTBEmIxRLUo=",
+							"_parent": {
+								"$ref": "AAAAAAGXaS55r1SHeqk="
+							},
+							"source": {
+								"$ref": "AAAAAAGXaS55r1SHeqk="
+							},
+							"target": {
+								"$ref": "AAAAAAGXaS6xdlaHPEk="
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaS6VFFWH2JE=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Seleziona Data"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaS6xdlaHPEk=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Seleziona Orario"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaS7OoVeHxtA=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Seleziona Sede"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaTcwOgGB9+0=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Inserimento Credenziali"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaTfA4g4pVhw=",
+					"_parent": {
+						"$ref": "AAAAAAGXaLk25Ah703I="
+					},
+					"name": "Fornire Patente",
+					"ownedElements": [
+						{
+							"_type": "UMLExtend",
+							"_id": "AAAAAAGXaTfBCg6wEkk=",
+							"_parent": {
+								"$ref": "AAAAAAGXaTfA4g4pVhw="
+							},
+							"source": {
+								"$ref": "AAAAAAGXaTfA4g4pVhw="
+							},
+							"target": {
+								"$ref": "AAAAAAGXaTcwOgGB9+0="
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"_type": "UMLModel",
+			"_id": "AAAAAAGXaTj9IiRy2Uo=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "Model4",
+			"ownedElements": [
+				{
+					"_type": "UMLActor",
+					"_id": "AAAAAAGXaTkU0iS3LQM=",
+					"_parent": {
+						"$ref": "AAAAAAGXaTj9IiRy2Uo="
+					},
+					"name": "Admin",
+					"ownedElements": [
+						{
+							"_type": "UMLAssociation",
+							"_id": "AAAAAAGXaTujFCoL/JA=",
+							"_parent": {
+								"$ref": "AAAAAAGXaTkU0iS3LQM="
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaTujFCoMi0A=",
+								"_parent": {
+									"$ref": "AAAAAAGXaTujFCoL/JA="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaTkU0iS3LQM="
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaTujFCoNEfY=",
+								"_parent": {
+									"$ref": "AAAAAAGXaTujFCoL/JA="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaTtXHimrz2k="
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "AAAAAAGXaTuuzyrVF4w=",
+							"_parent": {
+								"$ref": "AAAAAAGXaTkU0iS3LQM="
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaTuuzyrWe1k=",
+								"_parent": {
+									"$ref": "AAAAAAGXaTuuzyrVF4w="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaTkU0iS3LQM="
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AAAAAAGXaTuuzyrXDC8=",
+								"_parent": {
+									"$ref": "AAAAAAGXaTuuzyrVF4w="
+								},
+								"reference": {
+									"$ref": "AAAAAAGXaTt7ninb09A="
+								}
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaTtXHimrz2k=",
+					"_parent": {
+						"$ref": "AAAAAAGXaTj9IiRy2Uo="
+					},
+					"name": "Gestione Navette"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "AAAAAAGXaTt7ninb09A=",
+					"_parent": {
+						"$ref": "AAAAAAGXaTj9IiRy2Uo="
+					},
+					"name": "Gestione Utenti"
+				}
+			]
 		}
 	]
 }
