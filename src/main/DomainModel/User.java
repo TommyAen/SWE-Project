@@ -1,53 +1,84 @@
 package main.DomainModel;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class User {
     public enum UserRole {
-        ADMIN, Student
+        ADMIN, STUDENT // TODO: forse meglio fare con Stringhe?
     }
 
     private int id;
     private String name;
     private String surname; // TODO: da implementare
     private String email;
-    private String password = ""; // TODO: secondo me non ha senso tenere la password in chiaro, basta nel database
-    private boolean license = false;
+    private String password; // TODO: ha senso tenere la password in chiaro??
+    // TODO: cambiare di conseguenza anche class diags
+    private String license; //TODO: metterla?
     private UserRole role;
     //private List<Booking> bookings; NON MESSO perché almeno la lista dei bookings rimane solo nel database e non c'p rischio di inconsistenza
 
-    public User() {}
 
-    public User(int id, String name, String surname, String email, String password, UserRole role) {
+    public User(int id, String name, String surname, String email, String pwd, String license_num, UserRole role) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
-        this.password = password; //TODO: valuratre se ha senso
+        this.password = pwd;
+        this.license = license_num;
         this.role = role;
+    }
+    // without License
+    public User(int id, String name, String surname, String email, String pwd, UserRole role) {
+        this(id, name, surname, email, pwd, null, role);
     }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public List<String> getName() { return List.of(name, surname); }
-    public void setName(String name, String surname) {
-        this.name = name;
-        this.surname = surname;
+    public List<String> getFullName() { return List.of(name, surname); } // FIXME: ??
+    public String getName(){ return name; }
+    public String getSurname(){ return surname; }
+    public void setName(String name) { this.name = name; }
+    public void setSurname(String surname) { this.surname = surname; }
+    public void setFullName(String name, String surname) {
+        setName(name);
+        setSurname(surname);
     }
-
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public boolean getLicense() { return license; }
-    public void setLicense(boolean license) { this.license = license; }
+    public String getLicense() { return license; }
+    public void setLicense(String license) { this.license = license; }
 
     public UserRole getRole() { return role; }
     public void setRole(UserRole role) { this.role = role; }
 
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
+    public boolean isAdmin() {
+        return role == UserRole.ADMIN;
+    }
+
+    public boolean isStudent() {
+        return role == UserRole.STUDENT;
+    }
+
+    public boolean hasLicense() {
+        return license!=null;
+    }
 }
 
 

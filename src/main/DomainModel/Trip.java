@@ -1,82 +1,70 @@
 package main.DomainModel;
 
-import main.DomainModel.*;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Time;
+import java.sql.Date;
 
 public class Trip {
 
-    private int id;
-    private Location initialLocation;
-    private Location finalLocation;
-    private LocalDate date;
-    private LocalTime time;
-    private User driver;
-    private Vehicle vehicle;
-    private List<Booking> bookings;
-
-    // Constructors
-    public Trip() {
-        this.bookings = new ArrayList<>();
+    public enum TripState {
+        SCHEDULED,
+        ONGOING,
+        COMPLETED,
+        CANCELED
     }
+    private int id;
+    private Location origin;
+    private Location destination;
+    private Date date;
+    private Time time;
+    private User driver;
+    private Vehicle Vehicle;
+    private TripState state;
 
-    public Trip(int id, Location initialLocation, Location finalLocation,
-                LocalDate date, LocalTime time, User driver, Vehicle vehicle) {
+
+    public Trip(int id, Location origin, Location destination,
+                Date date, Time time, User driver_id, Vehicle vehicle_id, TripState state) {
         this.id = id;
-        this.initialLocation = initialLocation;
-        this.finalLocation = finalLocation;
+        this.origin = origin;
+        this.destination = destination;
         this.date = date;
         this.time = time;
-        this.driver = driver;
-        this.vehicle = vehicle;
-        this.bookings = new ArrayList<>();
+        this.driver = driver_id;
+        this.Vehicle = vehicle_id;
+        this.state = state;
     }
 
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public Location getInitialLocation() { return initialLocation; }
-    public void setInitialLocation(Location initialLocation) {
-        this.initialLocation = initialLocation;
-    }
+    public Location getOrigin() { return origin; }
+    public void setOrigin(Location origin) { this.origin = origin;}
 
-    public Location getFinalLocation() { return finalLocation; }
-    public void setFinalLocation(Location finalLocation) {
-        this.finalLocation = finalLocation;
-    }
+    public Location getDestination() { return destination; }
+    public void setDestination(Location destination) { this.destination = destination;}
 
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
+    public Date getDate() { return date; }
+    public void setDate(Date date) { this.date = date; }
 
-    public LocalTime getTime() { return time; }
-    public void setTime(LocalTime time) { this.time = time; }
+    public Time getTime() { return time; }
+    public void setTim(Time time) { this.time = time; }
 
     public User getDriver() { return driver; }
     public void setDriver(User driver) { this.driver = driver; }
 
-    public Vehicle getVehicle() { return vehicle; }
-    public void setVehicle(Vehicle vehicle) { this.vehicle = vehicle; }
+    public Vehicle getVehicle() { return Vehicle; }
+    public void setVehicle(Vehicle vehicle) { this.Vehicle = vehicle; }
 
-    public List<Booking> getBookings() { return bookings; }
-    public void setBookings(List<Booking> bookings) { this.bookings = bookings; }
+    public TripState getState() { return state; }
+    public void setState(TripState state) { this.state = state; }
 
-    // Additional Methods
-    public int getAvailableSeats() {
-        return vehicle.getCapacity() - bookings.size();
-    }
-    public boolean isFull() {
-        return bookings.size() >= vehicle.getCapacity();
-    }
+
+
 
     @Override
     public String toString() {
-        return "Trip{id=" + id + ", starting from=" + initialLocation +
-                ", to=" + finalLocation + ", date=" + date +
+        return "Trip{id=" + id + ", starting from=" + origin +
+                ", to=" + destination + ", date=" + date +
                 ", time=" + time + ", driver=" + driver + "}";
     }
 }

@@ -5,15 +5,20 @@ public class Vehicle {
         WORKING, MAINTENANCE, OUT_OF_SERVICE
     }
 
-    private String id;
+    private int id;
     private int capacity;
     private VehicleState state;
     private Location location;
 
     // Constructors
-    public Vehicle() {}
+    public Vehicle(int id, int capacity, VehicleState state) {
+        this.id = id;
+        this.capacity = capacity;
+        this.state = state;
+        this.location = null; // Default location is null
+    }
 
-    public Vehicle(String id, int capacity, VehicleState state, Location location) {
+    public Vehicle(int id, int capacity, VehicleState state, Location location) {
         this.id = id;
         this.capacity = capacity;
         this.state = state;
@@ -21,8 +26,8 @@ public class Vehicle {
     }
 
     // Getters and Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
     public int getCapacity() { return capacity; }
     public void setCapacity(int capacity) { this.capacity = capacity; }

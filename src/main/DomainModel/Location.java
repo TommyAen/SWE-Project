@@ -4,14 +4,15 @@ public class Location {
     private int id;
     private String name;
     private String address;
-    private String carSpots; // TODO: da mettere nel diagramma delle classi
+    private int carSpots; // TODO: da mettere nel diagramma delle classi
 
     public Location() {}
 
-    public Location(int id, String name, String address) {
+    public Location(int id, String name, String address, int carSpots) {
         this.id = id;
         this.name = name;
         this.address = address;
+        this.carSpots = carSpots; // Default car spots // FIXME : gestire carspots in DAO ECC
     }
 
     // Getters and Setters
@@ -24,8 +25,8 @@ public class Location {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
-    public String getCarSpots() { return carSpots; }
-    public void setCarSpots(String carSpots) { this.carSpots = carSpots; }
+    public int getCarSpots() { return carSpots; }
+    public void setCarSpots(int carSpots) { this.carSpots = carSpots; }
 
     @Override
     public String toString() {
