@@ -7,36 +7,28 @@ DROP TABLE IF EXISTS Vehicle;
 DROP TABLE IF EXISTS Location;
 DROP TABLE IF EXISTS "User";
 
-
--- Enums
--- FIXME: usare ENUM o VARCHARì?????
-CREATE TYPE user_role AS ENUM ('STUDENT', 'ADMIN');
-CREATE TYPE vehicle_state AS ENUM ('AVAILABLE', 'IN_USE', 'MAINTENANCE');
-CREATE TYPE booking_state AS ENUM ('PENDING', 'CONFIRMED', 'CANCELLED');
-CREATE TYPE trip_state AS ENUM ('SCHEDULED', 'COMPLETED', 'CANCELLED');
-
--- TODO: da aggiungere constraints
+-- TODO: da aggiungere constraints ?
 
 -- Create tables
 CREATE TABLE "User" (
     id INTEGER primary key, -- TODO: mettere limite a caratteri matricolo
-    name VARCHAR(100) NOT NULL,
-    surname VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(20) NOT NULL DEFAULT 'USER', -- USER, ADMIN
-    license VARCHAR(50) -- driver's license number
+    name VARCHAR(50),
+    surname VARCHAR(50),
+    email VARCHAR(40) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL, -- FIXME: fare hash??
+    role VARCHAR(15) NOT NULL DEFAULT 'STUDENT',
+    license VARCHAR(30) UNIQUE -- driver's license number: FIXME: mettere in un altra tabella??
 );
 
 CREATE TABLE Location (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
-    name VARCHAR(100) NOT NULL,
-    address VARCHAR(200),
-    vehicle_capacity INTEGER CONSTRAINT positive_capacity CHECK (vehicle_capacity >= 0) DEFAULT 0
+    name VARCHAR(100) NOT NULL UNIQUE ,
+    address VARCHAR(100) NOT NULL UNIQUE ,
+    parking_spots INTEGER CONSTRAINT positive_spots CHECK (parking_spots >= 0) DEFAULT 2
 );
 
 CREATE TABLE Vehicle (
-    id INTEGER PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     capacity INTEGER NOT NULL,
     state VARCHAR(20) NOT NULL DEFAULT 'AVAILABLE', -- AVAILABLE, IN_USE, MAINTENANCE
     location INTEGER NOT NULL ,
@@ -46,26 +38,29 @@ CREATE TABLE Vehicle (
 
 CREATE TABLE Trip (
     id INTEGER GENERATED Always As IDENTITY primary key NOT NULL,
-    init_loc INTEGER NOT NULL,
-    dest_loc INTEGER NOT NULL,
+    origin INTEGER NOT NULL,
+    destination INTEGER NOT NULL,
+    date DATE NOT NULL,
+    time TIME NOT NULL,
+    state VARCHAR(20) NOT NULL DEFAULT 'SCHEDULED', -- SCHEDULED, COMPLETED, CANCELLED
     driver INTEGER NOT NULL, --TODO: da decidere come gestire creazione trip
     vehicle INTEGER NOT NULL,
-    date DATE NOT NULL,
-    FOREIGN KEY (init_loc) REFERENCES Location(id),
-    FOREIGN KEY (dest_loc) REFERENCES Location(id),
+    FOREIGN KEY (origin) REFERENCES Location(id),
+    FOREIGN KEY (destination) REFERENCES Location(id),
     FOREIGN KEY (driver) REFERENCES "User"(id),
     FOREIGN KEY (vehicle) REFERENCES Vehicle(id)
 );
 
 CREATE TABLE Booking (
-    id INTEGER PRIMARY KEY,
-    "user" INTEGER NOT NULL,
-    trip INTEGER NOT NULL,
-    date Date NOT NULL,
-    state VARCHAR(20) NOT NULL DEFAULT 'PENDING', -- PENDING, CONFIRMED, CANCELLED, COMPLETED
-    FOREIGN KEY ("user") REFERENCES "User"(id),
-    FOREIGN KEY (trip) REFERENCES Trip(id)
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    trip INTEGER NOT NULL, -- trips must be created before bookings
+    state VARCHAR(20) NOT NULL DEFAULT 'SCHEDULED', -- SCHEDULED, CONFIRMED, CANCELLED, COMPLETED
+    FOREIGN KEY (user_id) REFERENCES "User"(id) ON DELETE CASCADE,
+    FOREIGN KEY (trip) REFERENCES Trip(id) ON DELETE CASCADE
 );
+
+-- TODO: decidere come fare le cascade (se un utente viene cancellato, cancellare anche i suoi booking? ecc.. per tutte le tabelle)
 
 
 
