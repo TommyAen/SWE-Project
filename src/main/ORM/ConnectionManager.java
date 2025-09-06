@@ -9,27 +9,19 @@ public class ConnectionManager {
     private static final String username = "postgres";
     private static final String password = "password";
 
-    //TODO: con questo avremo una singola connessione per tutta l'app, ho scelto invece di aprire connesione ogni volta che serve
-//    private static Connection connection = null;
-//
-//    // singleton instance
-//    private static ConnectionManager instance = null;
-//
-//    private ConnectionManager(){}
-//
+    // FIXME: singleton ?
+    private ConnectionManager(){} // Item 4 Effective Java: ConnectionManager is a utility class and should not be instantiated
+
 //    public static ConnectionManager getInstance() {
-//
-//        if (instance == null) { instance = new ConnectionManager(); }
-//
+//        if (instance == null) {
+//            instance = new ConnectionManager();
+//        }
 //        return instance;
-//
 //    }
 
-    // TODO: questa classe potrebbe anche avere solo un metodo statico, e non servirebbe istanziarla, se si vuole fare si può fare private constructor
-
-    public Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         // Exception handled in DAOs
-        return DriverManager.getConnection(url, username, password);
+        return DriverManager.getConnection(url, username, password); // change this if needed a connection pool
 
     }
 }
