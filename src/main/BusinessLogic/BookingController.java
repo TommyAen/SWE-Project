@@ -1,36 +1,155 @@
 package main.BusinessLogic;
 
 import main.DomainModel.Booking;
+import main.DomainModel.Trip;
 import main.ORM.*;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BookingController {
 
-    private BookingDAO bookingDAO;
-    private TripDAO tripDAO;
-    private AuthController authController;
+    private final BookingDAO bookingDAO;
+    private final TripController tripController;
+    private final AuthController authController;
 
     public BookingController(AuthController authController) {
         this.bookingDAO = new BookingDAO();
-        this.tripDAO = new TripDAO();
+        this.tripController = new TripController(authController);
         this.authController = authController;
     }
 
-    public Booking buildBooking(int tripID) {
-        return null;
+    // Create a new booking
+    public boolean createBooking(int tripID) {
+        try {
+            if (!authController.isLoggedIn()) {
+                System.err.println("User must be logged in to create a booking.");
+                return false;
+            }
+
+            Trip trip = tripController.findById(tripID);
+            if (tripController.isFull(trip)) {
+                System.err.println("Trip is full.");
+                return false;
+            }
+
+            Booking newBooking = new Booking(authController.getCurrentUser(), Booking.BookingState.PENDING, trip);
+            bookingDAO.insertBooking(newBooking);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public boolean addBooking(Booking booking) {return false;}
-    public boolean deleteBooking(Booking booking) {return false;}
-    public boolean modifyBooking(Booking booking) {return false;}
+    // Delete a booking by ID
+    public boolean cancelBooking(int bookingId) {
+        try {
+            Booking booking = bookingDAO.findBookingByID(bookingId);
+            if (booking == null) {
+                System.err.println("Booking not found: " + bookingId);
+                return false;
+            }
 
-    public Booking searchBooking(int bookingID) {return null; }
+            if (!authController.isLoggedIn() ||
+                !(authController.isCurrentUserAdmin() || authController.getCurrentUser().getId() == booking.getUser().getId())) {
+                System.err.println("Not authorized to delete this booking.");
+                return false;
+            }
 
-    public boolean listUserBookings(int userID) {return false; }
-    public boolean listTripBookings(int tripID) {return false; }
+            booking.setState(Booking.BookingState.CANCELED);
+            bookingDAO.updateBooking(booking); // FIXME: così manteniamo lo storico
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-    public void viewBookingDetails(int bookingID) {}
+    // Modify a booking
+    public boolean modifyBooking(int bookingId, Booking.BookingState newState) {
+        try {
+            Booking booking = bookingDAO.findBookingByID(bookingId);
+            if (booking == null) {
+                System.err.println("Booking not found: " + bookingId);
+                return false;
+            }
 
-    public List<Booking> getConfirmedBookings(int tripID) {return null; }
+            if (!authController.isLoggedIn() ||
+                !(authController.isCurrentUserAdmin() || authController.getCurrentUser().getId() == booking.getUser().getId())) {
+                System.err.println("Not authorized to modify this booking.");
+                return false;
+            }
+
+            if (newState != null) booking.setState(newState);
+            bookingDAO.updateBooking(booking);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Search for a booking by ID
+    public Booking searchBooking(int bookingID) {
+        try {
+            return bookingDAO.findBookingByID(bookingID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // List bookings for a user
+    public void listUserBookings(int userID) {
+        try {
+            List<Booking> bookings = bookingDAO.findBookingsByUserID(userID);
+            if (bookings.isEmpty()) {
+                System.out.println("No bookings found for user " + userID);
+            } else {
+                bookings.forEach(System.out::println);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // List bookings for a trip
+    public void listTripBookings(int tripID) {
+        try {
+            List<Booking> bookings = bookingDAO.findBookingsByTripID(tripID);
+            if (bookings.isEmpty()) {
+                System.out.println("No bookings found for trip " + tripID);
+            } else {
+                bookings.forEach(System.out::println);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // View booking details
+    public void viewBookingDetails(int bookingID) {
+        Booking booking = searchBooking(bookingID);
+        if (booking == null) {
+            System.out.println("Booking not found: " + bookingID);
+        } else {
+            System.out.println(booking);
+        }
+    }
+
+    // Get confirmed bookings for a trip
+    public List<Booking> getConfirmedBookings(int tripID) {
+        try {
+            List<Booking> bookings = bookingDAO.findBookingsByTripID(tripID);
+            return bookings.stream()
+                           .filter(b -> b.getState() == Booking.BookingState.CONFIRMED)
+                           .collect(Collectors.toList());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
 }

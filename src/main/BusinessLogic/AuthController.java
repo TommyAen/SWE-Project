@@ -15,17 +15,38 @@ public class AuthController {
         userDAO = new UserDAO();
         currentUser = null;
     }
-
-    public boolean register(){
-        return false; // TODO
+    public AuthController(UserDAO userDAO) {
+        this.userDAO = userDAO;
+        currentUser = null;
     }
-    public boolean login(String username, String password) throws SQLException { return false; } // TODO
 
-    public void logout(){} // TODO
-
-    public boolean isLoggedIn(){ //TODO: è un metodo di UserController?
+    public void loginById(int id, String password) throws SQLException {
+        User user = userDAO.findById(id);
+        login(user, password);
+    }
+    public void loginByEmail(String email, String password) throws SQLException {
+        User user = userDAO.findUserByEmail(email);
+        login(user, password);
+    }
+    public void login(User user, String password) throws SQLException {
+        if (user != null && user.getPassword().equals(password)) {
+            currentUser = user;
+        }
+        else {
+            throw new IllegalArgumentException("Invalid user or password"); // TODO: scegliere/creare eccezione apposta?
+        }
+    }
+    public boolean isLoggedIn(){
         return currentUser != null;
     }
+
+    public void logout(){
+        if (!isLoggedIn()) {
+            throw new IllegalStateException("No user is currently logged in.");
+        }
+        else currentUser = null;
+    }
+
     public boolean isCurrentUserAdmin() {
         return isLoggedIn() && currentUser.isAdmin();
     }
@@ -33,20 +54,35 @@ public class AuthController {
         return isLoggedIn() && currentUser.isStudent();
     }
     public User getCurrentUser() {
-        return currentUser;
+        if (!isLoggedIn()) {
+            throw new IllegalStateException("No user is currently logged in.");
+        }
+        else return currentUser;
     }
 
+    public void setCurrentUser(User currentUser) {
+        if (!isLoggedIn()) {
+            throw new IllegalStateException("No user is currently logged in.");
+        }
+        this.currentUser = currentUser;
+    }
 
     // FIXME: Validation forse da spostare in controller a parte?
+    public void validateCredentials(String email, String password) {
+        if (!validateEmail(email) || !validatePassword(password)) {
+            throw new IllegalArgumentException("email or password not legal"); // FIXME: non so ne va bene
+        }
+        else {
+            System.out.println("Credentials validated");
+        }
+    }
     public boolean validatePassword(String password) {
         // TODO: implement password validation logic (e.g., length, special characters, etc.)
-        return false;
+        return true;
     }
     public boolean validateEmail(String email) {
         // TODO: implement email validation logic (e.g., regex pattern)
-        return false;
+        return true;
     }
-
-    //TODO: decidere se tenere hash di password o password in chiaro
-
 }
+
