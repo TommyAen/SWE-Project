@@ -71,6 +71,7 @@ INSERT INTO Location (name, address) VALUES
  ('Economia / Giurisprudenza / Scienze Matematiche', 'Via delle Pandette, 32, 50127 Firenze FI'),
  ('Farmacia / Medicina e Polo Biomedico', 'Viale Morgagni, 40-44 / 85, 50134 Firenze FI'),
  ('Facoltà di Ingegneria', 'Via Santa Marta, 3, 50139 Firenze FI'),
+ ('Centro Didattico Morgagni', 'Viale Morgagni, 65, 50134 Firenze FI'),
  ('Lettere e Filosofia', 'Piazza Brunelleschi, 3-4, 50121 Firenze FI'),
  ('Psicologia', 'Via della Torretta, 16, 50137 Firenze FI'),
  ('Scienze della Formazione', 'Via del Parione, 7, 50123 Firenze FI'),
