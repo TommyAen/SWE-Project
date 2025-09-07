@@ -32,7 +32,7 @@ CREATE TABLE Vehicle (
     capacity INTEGER NOT NULL,
     state VARCHAR(20) NOT NULL DEFAULT 'AVAILABLE', -- AVAILABLE, IN_USE, MAINTENANCE
     location INTEGER NOT NULL ,
-    FOREIGN KEY (location) REFERENCES Location(id)
+    FOREIGN KEY (location) REFERENCES Location(id) ON DELETE CASCADE
 );
 
 
@@ -43,11 +43,11 @@ CREATE TABLE Trip (
     date DATE NOT NULL,
     time TIME NOT NULL,
     state VARCHAR(20) NOT NULL DEFAULT 'SCHEDULED', -- SCHEDULED, COMPLETED, CANCELLED
-    driver INTEGER NOT NULL, --TODO: da decidere come gestire creazione trip
+    driver INTEGER , --TODO: da decidere come gestire creazione trip
     vehicle INTEGER NOT NULL,
     FOREIGN KEY (origin) REFERENCES Location(id),
     FOREIGN KEY (destination) REFERENCES Location(id),
-    FOREIGN KEY (driver) REFERENCES "User"(id),
+    FOREIGN KEY (driver) REFERENCES "User"(id) ON DELETE SET NULL,
     FOREIGN KEY (vehicle) REFERENCES Vehicle(id)
 );
 
