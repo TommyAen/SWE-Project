@@ -18,6 +18,13 @@ public class Vehicle {
         this.location = null; // Default location is null
     }
 
+    public Vehicle(int capacity, VehicleState state, Location location) {
+        this.id = 0;
+        this.capacity = capacity;
+        this.state = state;
+        this.location = location;
+    }
+
     public Vehicle(int id, int capacity, VehicleState state, Location location) {
         this.id = id;
         this.capacity = capacity;

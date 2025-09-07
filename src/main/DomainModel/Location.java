@@ -6,7 +6,12 @@ public class Location {
     private String address;
     private int carSpots; // TODO: da mettere nel diagramma delle classi
 
-    public Location() {}
+    public Location(String name, String address, int carSpots) {
+        this.id = 0; // ID will be set by the database
+        this.name = name;
+        this.address = address;
+        this.carSpots = carSpots; // Default car spots // FIXME : gestire carspots in DAO ECC
+    }
 
     public Location(int id, String name, String address, int carSpots) {
         this.id = id;
