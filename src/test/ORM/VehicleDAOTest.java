@@ -7,6 +7,7 @@ import main.ORM.LocationDAO;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,24 +59,14 @@ class VehicleDAOTest {
 
     @Test
     void findAvailableInLocation() {
-//        Location location = new Location("LocB", "AddrB", 8);
-//        try {
-//            LocationDAO locationDAO = new LocationDAO();
-//            location = locationDAO.addLocation(location);
-//            Vehicle v1 = dao.insertVehicle(new Vehicle(0, 10, Vehicle.VehicleState.WORKING, location));
-//            Vehicle v2 = dao.insertVehicle(new Vehicle(0, 15, Vehicle.VehicleState.OUT_OF_SERVICE, location));
-//            Vehicle v3 = dao.insertVehicle(new Vehicle(0, 10, Vehicle.VehicleState.WORKING, location));
-//
-//            var available = dao.findAvailableInLocation(location);
-//            assertNotNull(available);
-//            for (Vehicle v : available) {
-//                assertNotEquals(Vehicle.VehicleState.OUT_OF_SERVICE, v.getState());
-//            }
-//        } catch (Exception e) {
-//            fail(e);
-//        }
-        // TODO
-    }
+        Location loc = locationDAO.addLocation(new Location("LocB", "AddrB", 8));
+        Vehicle v1 = dao.insertVehicle(new Vehicle(0, 10, Vehicle.VehicleState.WORKING, loc));
+        Vehicle v2 = dao.insertVehicle(new Vehicle(0, 15, Vehicle.VehicleState.OUT_OF_SERVICE, loc));
+        List<Vehicle> available = dao.findAvailableInLocation(loc);
+        assertTrue(available.contains(v1));
+        assertFalse(available.contains(v2));
+    }   
+
 
     @Test
     void updateStatus() {
