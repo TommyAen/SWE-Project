@@ -68,6 +68,18 @@ public class BookingController {
         }
     }
 
+    public void removeBooking(int bookingId) {
+        try {
+            if (!authController.isLoggedIn() || !authController.isCurrentUserAdmin()) {
+                System.err.println("Not authorized to remove this booking.");
+                return;
+            }
+            bookingDAO.removeBooking(bookingId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     // Modify a booking
     public boolean modifyBooking(int bookingId, Booking.BookingState newState) {
         try {
