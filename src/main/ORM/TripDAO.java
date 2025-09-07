@@ -178,5 +178,13 @@ public class TripDAO {
         if (vehicle != null) return vehicle.getCapacity();
         else return 0; // TODO: gestire errore
     }
+
+    public void removeAllTrips() throws SQLException {
+        String deleteSQL = "DELETE FROM trip";
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
+            preparedStatement.executeUpdate();
+        }
+    }
 }
 

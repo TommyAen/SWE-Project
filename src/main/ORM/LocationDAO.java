@@ -14,15 +14,22 @@ public class LocationDAO {
     }
 
     // Insert Methods
-    public void addLocation(Location location) throws SQLException {
+    public Location addLocation(Location location) throws SQLException {
         String insertSQL = "INSERT INTO location (name, address, parking_spots) VALUES (?, ?, ?)";
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
-            preparedStatement.setInt(1, location.getId());
-            preparedStatement.setString(2, location.getName());
-            preparedStatement.setString(3, location.getAddress());
-            preparedStatement.setInt(4, location.getCarSpots());
+             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, location.getName());
+            preparedStatement.setString(2, location.getAddress());
+            preparedStatement.setInt(3, location.getCarSpots());
             preparedStatement.executeUpdate();
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int generatedId = generatedKeys.getInt(1);
+                    return new Location(generatedId, location.getName(), location.getAddress(), location.getCarSpots());
+                } else {
+                    throw new SQLException("Creating location failed, no ID obtained.");
+                }
+            }
         }
     }
 
@@ -32,6 +39,25 @@ public class LocationDAO {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
             preparedStatement.setInt(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new Location(
+                        resultSet.getInt(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getInt(4)
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
+    public Location findByName(String name) throws SQLException {
+        String selectSQL = "SELECT * FROM location WHERE name = ?";
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+            preparedStatement.setString(1, name);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     return new Location(
@@ -81,6 +107,13 @@ public class LocationDAO {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.setInt(1, locationId);
+            preparedStatement.executeUpdate();
+        }
+    }
+    public void removeAllLocations() throws SQLException {
+        String deleteSQL = "DELETE FROM location";
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.executeUpdate();
         }
     }

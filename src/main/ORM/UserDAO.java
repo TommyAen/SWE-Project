@@ -79,7 +79,7 @@ public class UserDAO {
 
                     return new User(id, name, surname, email,password, license, role); //FIXME: metteri costruttore vero
                 } else {
-                    throw new SQLException("User not found with id: " + id);
+                    return null;//throw new SQLException("User not found with id: " + id);
                 }
             }
         }
@@ -105,7 +105,7 @@ public class UserDAO {
 
                     return new User(id, name, surname, email,password, license, role);
                 } else {
-                    throw new SQLException("User not found with email: " + email);
+                    return null;
                 }
             }
         }
@@ -239,5 +239,17 @@ public class UserDAO {
     public void removeLicense(int user_id) throws SQLException {
         String updateSQL = "UPDATE \"User\" SET license = ? WHERE id = ?";
         updateQuery(user_id, null, updateSQL);
+    }
+
+    public void removeAllUsers() {
+        String deleteSQL = "DELETE FROM \"User\"";
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL))
+        {
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
