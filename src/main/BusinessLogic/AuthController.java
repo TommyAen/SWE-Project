@@ -17,7 +17,7 @@ public class AuthController {
     }
     public AuthController(UserDAO userDAO) {
         this.userDAO = userDAO;
-        currentUser = null;
+        this.currentUser = null;
     }
 
     public void loginById(int id, String password) throws SQLException {

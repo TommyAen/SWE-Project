@@ -21,14 +21,13 @@ public class UserController {
     public void register(int user_id,String name, String surname, String email, String password, String license,User.UserRole role) throws SQLException { // riceve i dati da interfaccia utente
         authController.validateCredentials(email, password);
 
-        if (userDAO.findUserByEmail(email) != null) {
-             // FIXME: da gestire per bene
-        }
+//        try(User user =  userDAO.findUserByEmail(email) != null) {
+//            throw new IllegalArgumentException("Email already in use");
+//        }
         User user = new User(user_id, name, surname, email,password, license, role);
         if (user.getRole().equals(User.UserRole.STUDENT)) userDAO.insertStudent(user);
         else if (user.getRole().equals(User.UserRole.ADMIN)) userDAO.insertAdmin(user);
         else throw new IllegalArgumentException("Invalid user role");
-
         authController.loginById(user_id, password);
     }
 
@@ -83,7 +82,6 @@ public class UserController {
 
     public boolean verifyPassword(String password){ return false; } // TODO ?
     public boolean verifyUserRole(User.UserRole role){ return false; } // TODO ?
-
 
 }
 

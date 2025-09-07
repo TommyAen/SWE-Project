@@ -33,11 +33,22 @@ public class TripController {
                 return null;
             }
 
-            if (!vehicleController.isVehicleAvailable(vehicleId)) {
-                System.out.println("Vehicle is not available at the specified time.");
+            if (origin == null || destination == null || date == null || time == null) {
+                System.out.println("Invalid trip details provided.");
+                return null;
             }
+
+            if (!vehicleController.isVehicleAvailable(vehicleId)) {
+                System.out.println("Vehicle is not available.");
+                return null;
+            }
+
             VehicleDAO vehicleDAO = new VehicleDAO();
             Vehicle vehicle = vehicleDAO.findById(vehicleId);
+            if (vehicle == null) {
+                System.out.println("Vehicle not found.");
+                return null;
+            }
 
             User user = authController.getCurrentUser();
             int user_id = user.getId();
@@ -46,10 +57,11 @@ public class TripController {
                 System.out.println("Only drivers can create trips.");
                 return null;
             }
-             // User that creates the trip is the driver
+
+            // User that creates the trip is the driver
             return tripDAO.insertTrip(origin, destination, date, time, user, vehicle);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.err.println("Error creating trip: " + e.getMessage());
             return null;
         }
     }
@@ -135,4 +147,3 @@ public class TripController {
         return getAvailableSeats(trip.getId()) == 0;
     }
 }
-
