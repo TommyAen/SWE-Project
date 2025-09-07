@@ -6,19 +6,16 @@ import java.util.List;
 
 public class User {
     public enum UserRole {
-        ADMIN, STUDENT // TODO: forse meglio fare con Stringhe?
+        ADMIN, STUDENT
     }
 
     private int id;
     private String name;
-    private String surname; // TODO: da implementare
+    private String surname;
     private String email;
-    private String password; // TODO: ha senso tenere la password in chiaro??
-    // TODO: cambiare di conseguenza anche class diags
-    private String license; //TODO: metterla?
+    private String password;
+    private String license;
     private UserRole role;
-    //private List<Booking> bookings; NON MESSO perché almeno la lista dei bookings rimane solo nel database e non c'p rischio di inconsistenza
-
 
     public User(int id, String name, String surname, String email, String pwd, String license_num, UserRole role) {
         this.id = id;
