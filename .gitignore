@@ -12,3 +12,6 @@
 *.nav
 *.snm
 *.vrb
+
+out/
+.idea/
