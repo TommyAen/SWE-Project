@@ -1,0 +1,284 @@
+\section{Analisi dei requisiti}
+Come descritto nell'introduzione, abbiamo progettato un applicativo per la gestione e organizzazione dell'utilizzo di navette fornite dall'università per dare la possibilità a studenti di fare spostamenti tra le sedi universitarie che non sono dotate di un trasporto pubblico adatto.
+Abbiamo individuato come attori principali i seguenti:
+\begin{itemize}
+    \item \textbf{Studente}: utente a cui è rivolto principalmente l'applicativo; 
+    \item \textbf{Admin}:  utente autorizzato alla gestione delle risorse e degli utenti
+\end{itemize}
+Gli studenti devono avere la possibilità di creare un profilo, nel quale dovranno inserire i propri dati, e successivamente avranno la possibilità di aggiungersi a viaggi già esistenti o crearne nuovi, indicando data, orario, sede di partenza e sede di arrivo; devono aver la possibilità di modificare o cancellare le proprie prenotazioni, e le proprie credenziali.
+\\L'admin invece deve avere totale controllo delle risorse disponibili, per avere la possibilità di aggiungere o eliminare navette in caso di guasti o di nuove disponibilità, e cancellare o modificare i viaggi. Deve avere anche la possibilità di gestire i profili utenti, potendo revocare la possibilità di guida o rimuovere profili.
+\subsection{Use Case Diagrams}
+I seguenti sono gli Use Case diagrams trovati, contenendo i casi d'uso più importanti riguardanti gli attori \textit{Student} (Vedi fig \ref{fig:ucstud}), e \textit{Admin} (vedi fig.\ref{fig:ucadmin}):
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Images/Student UC.png}
+    \caption{Use Case diagram per \textit{Studente}}
+    \label{fig:ucstud}
+
+    \vspace{0.5cm}
+
+    \centering
+    \includegraphics[width=1\linewidth]{Images/Admin UC diag.png}
+    \caption{Use Case diagram per Admin}
+    \label{fig:ucadmin}
+\end{figure}
+\subsection{Use Case Template}
+Di seguito sono riportati gli use case template per i principali casi d'uso del progetto; ognuno di questi descrive in modo strutturato alcune funzionalità del sistema.
+
+
+% Macro per i casi d'uso
+
+\newcommand{\UseCase}[9]{%
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{lX}
+        \toprule
+        \rowcolor{grey!20} \textbf{Use Case \##1} & \textbf{#2} \\
+        \midrule
+        \rowcolor{white} \textbf{Brief Description} & #3 \\
+        \rowcolor{blue!10} \textbf{Level} & #4 \\
+        \rowcolor{white} \textbf{Actors} & #5 \\
+        \rowcolor{blue!10} \textbf{Pre-conditions} & #6 \\
+        \rowcolor{white} \textbf{Basic Flow} & #7 \\
+        \rowcolor{blue!10} \textbf{Alternative Flows} & #8 \\
+        \rowcolor{white} \textbf{Post-conditions} & #9 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+}
+% Use Case 1
+\UseCase
+{1}
+{Studente - Registrazione}
+{Lo studente crea un nuovo account sull'applicazione.}
+{User Goal}
+{Studente}
+{\begin{description}[nosep]
+    \item[-] Studente non è ancora registrato
+    \item[-] Si trova nella schermata di login/sign up
+\end{description}}
+{\begin{description}[nosep]
+    \item[1.] Utente seleziona "Registrati"
+    \item[2.] Sistema mostra il form di registrazione
+    \item[3.] L'utente inserisce i dati richiesti
+    \item[4.] Conferma la registrazione
+\end{description}}
+{\begin{description}[nosep]
+    \item[3a.] Lo studente ha la patente B → se la aggiunge potrà essere un guidatore
+    \item[3b.] Dati incompleti/errati → sistema mostra errore
+\end{description}}
+{L'account dello studente è creato e può accedere al sistema}
+
+% Use Case 2
+\UseCase
+{2}
+{Visualizza viaggi disponibili}
+{Lo studente cerca viaggi già programmati per una specifica tratta e fascia oraria.}
+{User Goal}
+{Studente}
+{Lo studente ha effettuato l'accesso al sistema.}
+{\begin{description}[nosep]
+    \item[1.] Dalla pagina principale, lo studente sceglie l'opzione per cercare un viaggio
+    \item[2.] Lo studente inserisce la sede di partenza, arrivo e fascia oraria
+    \item[3.] Il sistema ricerca viaggi compatibili nel database
+    \item[4.] Il sistema propone i viaggi con i dati scelti
+\end{description}}
+{\begin{description}[nosep]
+    \item[4a.] Nessun viaggio compatibile → sistema mostra "Nessun viaggio trovato" e opzioni per creare nuovo viaggio/richiesta
+\end{description}}
+{Il sistema mostra la lista dei viaggi compatibili con i criteri di ricerca}
+
+% Use Case 3
+\UseCase
+{3}
+{Aggiungiti a Viaggio Esistente}
+{Lo studente si unisce a un viaggio esistente come passeggero.}
+{User Goal}
+{Studente}
+{Lo studente sta visualizzando la lista dei viaggi disponibili.}
+{\begin{description}[nosep]
+    \item[1.] Dalla lista viaggi, lo studente seleziona un viaggio
+    \item[2.] Premendo "Aggiungiti", il sistema verifica disponibilità
+    \item[3.] Il sistema associa la prenotazione e decrementa posti disponibili
+    \item[4.] Sistema mostra la conferma della prenotazione
+\end{description}}
+{\begin{description}[nosep]
+    \item[3a.] Posti esauriti → sistema mostra messaggio e aggiorna lista
+\end{description}}
+{Lo studente è stato aggiunto come passeggero al viaggio scelto}
+
+% Use Case 4
+\UseCase
+{4}
+{Crea Nuovo Viaggio (come Guidatore)}
+{Lo studente crea un nuovo viaggio proponendosi come guidatore.}
+{User Goal}
+{Studente (Guidatore)}
+{\begin{description}[nosep]
+    \item[-] UC-2 non ha prodotto risultati
+    \item[-] Studente è registrato come Guidatore
+    \item[-] Ci sono dei veicoli disponibili
+\end{description}}
+{\begin{description}[nosep]
+    \item[1.] Dopo una ricerca negativa, sistema mostra "Crea Nuovo Viaggio"
+    \item[2.] Studente seleziona l'opzione e conferma la creazione
+    \item[3.] Sistema crea nuovo Trip con studente come Driver
+    \item[4.] Sistema mostra conferma creazione
+\end{description}}
+{\begin{description}[nosep]
+    \item[3a.] Viaggio identico creato da altri → sistema annulla e propone di unirsi
+\end{description}}
+{Un nuovo viaggio è stato creato con lo studente come guidatore}
+
+% Use Case 5
+\UseCase
+{5}
+{Admin - Elimina Utente}
+{L’amministratore elimina un account utente.}
+{Amministratore}
+{Admin}
+{L’utente è registrato nel sistema.}
+{\begin{description}[nosep]
+    \item[1.] Admin accede alla gestione utenti
+    \item[2.] Cerca un utente per nome, matricola o email
+    \item[3.] Seleziona l’utente da eliminare
+    \item[4.] Conferma l’eliminazione
+    \item[5.] L'utente viene eliminato dal sistema
+\end{description}}
+{\begin{description}[nosep]
+    \item[3a.] L’utente ha prenotazioni future → sistema richiede conferma aggiuntiva
+\end{description}}
+{L’utente è rimosso dal sistema, incluse eventuali prenotazioni}
+
+% Use Case 6
+\UseCase
+{6}
+{Admin - Aggiungi Navetta}
+{L’admin registra una nuova navetta nel sistema.}
+{Amministratore}
+{Admin}
+{L’admin è autenticato e c'è un nuovo mezzo.}
+{\begin{description}[nosep]
+    \item[1.] Admin accede alla sezione "gestione navette"
+    \item[2.] Sistema mostra il form per inserire i dati del veicolo
+    \item[3.] Admin inserisce i dati della nuova navetta (posti, targa, ecc.)
+    \item[4.] Conferma l’inserimento
+    \item[5.] Viene aggiornata la lista dei veicoli
+\end{description}}
+{\begin{description}[nosep]
+    \item[2a.] Dati non validi → sistema mostra errore
+    \item[3a.] La navetta è già presente → impedisce duplicazione
+\end{description}}
+{La navetta è disponibile per l’assegnazione ai gruppi}
+
+
+
+
+\subsection{Page Navigation Diagram}
+Nel seguente diagramma sono riportate le possibili azioni che un utente può compiere, mostrando i modi con il quale si può navigare tra le pagine
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Images/PageNavigation_diag.png}
+    \caption{Page Navigation Diagram}
+    \label{fig:PageNavdiag}
+\end{figure}
+\subsection{Mockup}
+Di seguito mostriamo alcune rappresentazioni grafiche di una possibile implementazione dell'interfaccia utente del sistema. Queste immagini sono state realizzate tramite Figma, un'applicazione utilizzata nella modellazione di interfacce grafiche. La scelta della visualizzazione proposta per dispositivi mobili è motivata dal fatto che gli utenti molto probabilmente accederanno e usufruiranno del servizio tramite il proprio smartphone.
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Images/Login Page.png}
+        \caption{Schermata di login}
+        \label{fig:loginMockup}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Images/Register page.png}
+        \caption{Schermata di registrazione}
+        \label{fig:registerMockup}
+    \end{minipage}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Images/Crea tragitto.png}
+        \caption{Schermata di creazione tragitto}
+        \label{fig:createTrip}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Images/Tragitti disponibili.png}
+        \caption{Schermata di visualizzazione dei tragitti}
+        \label{fig:viewTrips}
+    \end{minipage}
+\end{figure}
+
+\section{Class Diagram}
+Vista la progettazione a tre livelli, di seguito sono riportati i diagrammi delle classi per ciascuno dei modelli.
+\subsubsection{Domain Model}\label{subsec:DM}
+Il Domain Model ha il compito di definire le entità concettuali fondamentali del dominio dell'applicazione; le sue classi rappresentano i concetti del "\textit{mondo reale"}, ed infatti le istanze di queste saranno utilizzati negli altri layer dell'applicazione per eseguire elaborazioni sui dati senza richiedere un accesso diretto al database; solitamente sono implementate come \textit{POJO} (\textit{Plain Old Java Object}), ed infatti non implementano nessun tipo di logica di business, lasciando questo compito agli altri strati.
+Le entità principali che abbiamo individuato sono le seguenti:
+\begin{itemize}
+    \item \textbf{User}: è la classe che rappresenta gli utenti; abbiamo deciso di distinguere studenti ed admin tramite l'uso di un attributo UserRole dato che in questo contesto condividono  tutti gli altri attributi, ma nello strato di business avranno diversi privilegi operativi
+    \item \textbf{Trip}: per rappresenta un viaggio organizzato incapsulando tutte le informazioni sul viaggio tra cui: origine, destinazione, data, orario, guidatore assegnato e veicolo
+    \item \textbf{Booking}: modella le prenotazioni fatte dagli studenti per i viaggi; in questa non abbiamo deciso di non mettere data e orario perché sarebbe stata una duplicazione essendo già presenti nella classe Trip
+    \item \textbf{Location}: modella le sedi universitarie avendo come attributi le informazioni
+    \item \textbf{Vehicle}: rappresenta le navetti che verranno usate nei viaggi
+\end{itemize}
+Nel seguente diagramma di classe vengono visualizzate le relazioni di composizione tra le classi.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Images/DomainModel_diag.png}
+    \caption{Domain Model class diagram}
+    \label{fig:DMdiag}
+\end{figure}
+\subsubsection{ORM}\label{subsec:ORM}
+Questo livello ha il compito di gestire l'interazione con il database scelto; viene implementato il design pattern DAO (\textit{Data Access Object}) fornendo un livello di astrazione utile per separare la logica di accesso ai dati nel database dalle operazioni di controllo e logica del dominio applicativo.
+Questo permette di poter usare la stessa business logic su diversi database solamente cambiando la struttura dei DAO, eliminando l'accoppiamento tra i due strati.\\
+Nel ORM sono presenti quindi un DAO per ogni entità del Domain Model, ognuno dei quali implementa i metodi di CRUD, e una classe di utilità ConnectionManager che centralizza il collegamento con il database scelto, facilitando eventuali modifiche alla configurazione del database senza modificare gli altri componenti.
+Di seguito viene riportato il diagramma delle classi
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Images/ORM_diag.png}
+    \caption{ORM class daig}
+    \label{fig:ORMdiag}
+\end{figure}
+\subsubsection{Business Logic}\label{subsec:BL}
+La Business Logic rappresenta la parte logica/operativa dell'applicativo; in questa vengono definite e implementate le regole di business e le operazioni di controllo, coordinando tutte le possibili operazioni.\\
+Questo strato fa quindi uso dei DAO per l'accesso ai dati persistenti e delle classi del Domain Model per l'elaborazione delle informazioni dei calcoli.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Images/BusinessLogic_diag.png}
+    \caption{Business Logic Diagram}
+    \label{fig:BLdiag}
+\end{figure}
+
+\subsection{Diagramma ER e schema relazionale}
+Per la progettazione del database abbiamo realizzato un diagramma ER (vedi fig. \ref{fig:ERdiag}, lo abbiamo trasformato in una rappresentazione più comprensibile (vedi fig. \ref{fig:ERraw}, e successivamente abbiamo costruito lo schema relazionale (vedi fig. \ref{fig:ERscheme}).
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Images/ER_diagram.png}
+    \caption{ER diagram}
+    \label{fig:ERdiag}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Images/ERraw.png}
+    \caption{ER raw}
+    \label{fig:ERraw}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Images/schema_relazionale.png}
+    \caption{Schema Relazionale}
+    \label{fig:ERscheme}
+\end{figure}
+Come si può  vedere dai dia

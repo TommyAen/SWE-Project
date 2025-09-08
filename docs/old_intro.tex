@@ -1,0 +1,35 @@
+\section{Introduzione}\label{sec:Introduzione}
+Questo elaborato rappresenta la relazione del progetto svolto per l'esame di Ingegneria del Software del corso di Laurea Triennali in Ingegneria Informatica dell'Università degli Studi di Firenze.
+Il codice sorgente del progetto è disponibile su \textit{GitHub} nel seguente indirizzo: \href{https://github.com/TommyAen/SWE-Project}{SWE-Project}.
+\subsection{Statement}
+Questo progetto si propone di sviluppare un'applicazione per la gestione e l'utilizzo di servizi di carsharing dedicato agli studenti universitari: l'università mette a disposizione delle auto (navette) che possono essere usate dagli studenti per spostarsi tra le sedi universitarie in modo efficiente e semplice.
+\newline
+Il sistema deve poter memorizzare i dati anagrafici degli utenti, che verranno forniti in fase di registrazione con possibilità di modifica in futuro.
+Se uno studente è in possesso di patente B, allora può dare la disponibilità a essere guidatore, mentre studenti senza patente potranno solo prenotarsi come passeggeri.
+\newline
+\textit{La prenotazione di un posto può essere effettuata entro la sera precedente al giorno del viaggio.}
+\newline
+Il gestore deve poter modificare o eliminare le prenotazioni, \textit{notificando gli utenti tramite email}, e deve anche poter gestire i profili utente, revocando il permesso di guida in caso di patente non più valida o eliminando il profilo utente se necessario. 
+Deve avere anche la possibilità di aggiungere o rimuovere navette nelle varie sedi in caso di nuove disponibilità o malfunzionamenti.
+
+\subsection{Architettura e pratiche utilizzate}
+Il software è stato sviluppato in Java, con il supporto di un database PostgreSQL per la memorizzazione e la gestione persistente dei dati. Per la connessione tra l’applicazione e il database è stata utilizzata la libreria JDBC (Java DataBase Connectivity).\\
+\noindent
+Per garantire una chiara separazione delle responsabilità, l’architettura del progetto è stata suddivisa in tre macro-componenti principali: Domain Model, Business Logic e ORM. Ciascun package ha un ruolo ben definito nella struttura complessiva del sistema.
+\begin{itemize}
+\item \textbf{Domain Model}: definisce le entità principali dell’applicazione, tra cui \textit{Utente}, \textit{Prenotazione}, \textit{Tratta}, ecc.
+\item \textbf{Business Logic}: contiene le classi che implementano le funzionalità principali del sistema, come la gestione delle prenotazioni, il controllo dei permessi e la logica di matching tra utenti.
+\item \textbf{ORM}: include le classi responsabili del mapping tra oggetti Java e tabelle del database, permettendo la lettura e scrittura dei dati in modo astratto e modulare.
+\end{itemize}
+I diagrammi UML, inclusi gli Use Case Diagram e i Class Diagram, sono stati realizzati seguendo lo standard UML (Unified Modeling Language).\\
+\noindent Di seguito l’elenco degli strumenti e delle piattaforme utilizzati durante lo sviluppo:
+\begin{itemize}
+\item \textbf{Visual Studio Code}: IDE utilizzato per lo sviluppo in Java
+\item \textbf{PgAdmin}: interfaccia grafica per la gestione di database PostgreSQL
+\item \textbf{GitHub}: piattaforma per il versionamento e la condivisione del codice sorgente
+\item \textbf{draw.io}: utilizzato per la realizzazione del navigation diagram e dei diagrammi UML
+\item \textbf{Figma}: software per la creazione di mock-up
+\item \textbf{Overleaf.com}: piattaforma per la stesura collaborativa del report in \LaTeX
+\end{itemize}
+
+\newpage
