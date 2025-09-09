@@ -4,24 +4,27 @@ import java.sql.*;
 
 // TODO: capire quale livello di accesso è più appropriato per Connection Manager, oppure se mettere il costruttore di questa classe package-private
 public class ConnectionManager {
-
     private static final String url = "jdbc:postgresql://localhost:5432/SWE?currentSchema=public";
     private static final String username = "postgres";
     private static final String password = "password";
+    private static Connection connection = null;
+    private static ConnectionManager instance = null;
 
-    // FIXME: singleton ?
-    private ConnectionManager(){} // Item 4 Effective Java: ConnectionManager is a utility class and should not be instantiated
+    private ConnectionManager(){}
 
-//    public static ConnectionManager getInstance() {
-//        if (instance == null) {
-//            instance = new ConnectionManager();
-//        }
-//        return instance;
-//    }
-
+    public static ConnectionManager getInstance() {
+        if (instance == null) {
+            instance = new ConnectionManager();
+        }
+        return instance;
+    }
     public static Connection getConnection() throws SQLException {
-        // Exception handled in DAOs
-        return DriverManager.getConnection(url, username, password); // change this if needed a connection pool
-
+        if (connection == null)
+            try {
+                connection = DriverManager.getConnection(url, username, password);
+            } catch (SQLException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        return connection;
     }
 }

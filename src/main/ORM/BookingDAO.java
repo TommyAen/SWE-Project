@@ -6,17 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookingDAO {
-    private ConnectionManager cm;
-
+    private Connection connection;
     public BookingDAO() {
-        //cm = new ConnectionManager();
+        try {
+            this.connection = ConnectionManager.getInstance().getConnection();
+        } catch (SQLException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 
     // Insert Methods
     public void insertBooking(User user, Trip trip, Booking.BookingState state) throws SQLException {
         String insertSQL = "INSERT INTO booking (user_id, trip, state) VALUES (?, ?, ?)";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);) {
             preparedStatement.setInt(1, user.getId());
             preparedStatement.setInt(2, trip.getId());
             preparedStatement.setString(3, state.toString());
@@ -31,8 +33,7 @@ public class BookingDAO {
     // Read Methods
     public Booking findBookingByID(int id) throws SQLException {
         String selectSQL = "SELECT user_id, trip, state FROM booking WHERE id = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
             preparedStatement.setInt(1, id);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
@@ -56,8 +57,7 @@ public class BookingDAO {
 
     public List<Booking> getBookingsFromQuery(String selectSQL) {
         List<Booking> bookingList = new ArrayList<>();
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)){
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -94,8 +94,7 @@ public class BookingDAO {
 
     public int countBookingsForTrip(int tripId) throws SQLException {
         String countSQL = "SELECT COUNT(*) AS total FROM booking WHERE trip = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(countSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(countSQL)) {
             preparedStatement.setInt(1, tripId);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
@@ -114,13 +113,18 @@ public class BookingDAO {
     // Delete Methods
     public void removeBooking(int id) throws SQLException {
         String deleteSQL = "DELETE FROM booking WHERE id = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
         }
     }
 
+    // Utility method to remove all bookings
+    public void removeAllBookings() throws SQLException {
+        String sql = "DELETE FROM booking";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.executeUpdate();
+        }
+    }
+
 }
-
-

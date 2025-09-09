@@ -15,8 +15,14 @@ public class UserDAOTest {
         userDAO = new UserDAO();
     }
 
+    @AfterAll
+    static void teardown() {
+        // Remove all users from the table after tests
+        try {
+            userDAO.removeAllUsers();
+        } catch (Exception ignored) {}
+    }
 
-    //TODO: gestione eccezioni?
 
     // Unit tests for UserDAO methods
     // Note: These tests assume a test database is set up and accessible.

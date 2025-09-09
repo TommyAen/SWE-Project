@@ -17,24 +17,26 @@ class TripControllerTest {
     private UserDAO userDAO;
     private LocationDAO locationDAO;
     private VehicleDAO vehicleDAO;
+    private BookingDAO bookingDAO;
+    private TripDAO tripDAO;
 
     @BeforeEach
     void setUp() {
         // Clean up tables before each test
-        try (Connection conn = ConnectionManager.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate("DELETE FROM trip");
-            stmt.executeUpdate("DELETE FROM vehicle");
-            stmt.executeUpdate("DELETE FROM location");
-            stmt.executeUpdate("DELETE FROM \"User\" ");
-        } catch (Exception e) {}
+        bookingDAO = new BookingDAO();
+        tripDAO = new TripDAO();
         authController = new AuthController();
         tripController = new TripController(authController);
         userDAO = new UserDAO();
         locationDAO = new LocationDAO();
         vehicleDAO = new VehicleDAO();
-        // Insert test user and authenticate
         try {
+            bookingDAO.removeAllBookings();
+            tripDAO.removeAllTrips();
+            vehicleDAO.removeAllVehicles();
+            locationDAO.removeAllLocations();
+            userDAO.removeAllUsers();
+            // Insert test user and authenticate
             userDAO.insertStudent(1, "Driver", "Test", "driver@test.com", "password", "345fakeDL");
             authController.login(userDAO.findById(1), "password");
         } catch (Exception e) { fail(e); }
@@ -42,14 +44,13 @@ class TripControllerTest {
 
     @AfterEach
     void tearDown() {
-        // Clean up tables after each test
-        try (Connection conn = ConnectionManager.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate("DELETE FROM trip");
-            stmt.executeUpdate("DELETE FROM vehicle");
-            stmt.executeUpdate("DELETE FROM location");
-            stmt.executeUpdate("DELETE FROM \"User\" ");
-        } catch (Exception e) {}
+        try {
+            bookingDAO.removeAllBookings();
+            tripDAO.removeAllTrips();
+            vehicleDAO.removeAllVehicles();
+            locationDAO.removeAllLocations();
+            userDAO.removeAllUsers();
+        } catch (Exception e) { fail(e); }
     }
 
     @Test

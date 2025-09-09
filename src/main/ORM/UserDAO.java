@@ -7,15 +7,14 @@ import java.util.List;
 
 public class UserDAO {
 
-    //private final ConnectionManager cm;
+    private Connection connection;
 
     public UserDAO() {
-        //this.cm = new ConnectionManager();
-//        try {
-//            this.connection = ConnectionManager.getInstance().getConnection();
-//        } catch (SQLException | ClassNotFoundException e) {
-//            System.err.println("Error: " + e.getMessage());
-//        }
+        try {
+            this.connection = ConnectionManager.getInstance().getConnection();
+        } catch (SQLException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 
     // INSERT Methods
@@ -23,7 +22,7 @@ public class UserDAO {
     private void insertUser(int id, String name, String surname, String email, String password, String license, User.UserRole role) throws SQLException {
         String insertSQL = "INSERT INTO \"User\" (id, name, surname, email, password, role, license) VALUES (?, ?, ?, ?,?, ?, ?)";
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (
              PreparedStatement preparedStatement = connection.prepareStatement(insertSQL))
         {
             preparedStatement.setInt(1, id);
@@ -34,7 +33,7 @@ public class UserDAO {
             preparedStatement.setString(6, role.toString());
             preparedStatement.setString(7, license);
 
-            preparedStatement.executeUpdate(); // FIXME: gestire eccezioni di violazione vincoli o altro??
+            preparedStatement.executeUpdate();
         }
     }
     public void insertStudent(int id,String name, String surname, String email,String password, String license) throws SQLException {
@@ -45,7 +44,6 @@ public class UserDAO {
     }
     public void insertAdmin(int id,String name, String surname, String email, String password) throws SQLException {
         insertUser(id, name, surname, email, password,null, User.UserRole.ADMIN); // Admins don't need license
-        // TODO: menziona in relazione che gli admin non hanno license
     }
 
     public void insertStudent(User student) throws SQLException {
@@ -61,13 +59,9 @@ public class UserDAO {
 
     // Read Methods
     public User findById(int id) throws SQLException {
-        String selectSQL = "SELECT id, name, id, name, surname, email, password, role, license FROM \"User\" WHERE id = ?";
-
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
-
+        String selectSQL = "SELECT id, name, surname, email, password, role, license FROM \"User\" WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
             preparedStatement.setInt(1, id);
-
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     String name = resultSet.getString("name");
@@ -76,10 +70,9 @@ public class UserDAO {
                     String password = resultSet.getString("password");
                     String license = resultSet.getString("license");
                     User.UserRole role = User.UserRole.valueOf(resultSet.getString("role"));
-
-                    return new User(id, name, surname, email,password, license, role); //FIXME: metteri costruttore vero
+                    return new User(id, name, surname, email, password, license, role);
                 } else {
-                    return null;//throw new SQLException("User not found with id: " + id);
+                    return null;
                 }
             }
         }
@@ -87,13 +80,8 @@ public class UserDAO {
 
     public User findUserByEmail(String email) throws SQLException {
         String selectSQL = "SELECT * FROM \"User\" WHERE email = ?";
-
-        // FIXME: codice un pò duplicato, forse si può fare un metodo privato che prende la query e il parametro
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
-
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
             preparedStatement.setString(1, email);
-
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     String name = resultSet.getString("name");
@@ -102,8 +90,7 @@ public class UserDAO {
                     String password = resultSet.getString("password");
                     String license = resultSet.getString("license");
                     User.UserRole role = User.UserRole.valueOf(resultSet.getString("role"));
-
-                    return new User(id, name, surname, email,password, license, role);
+                    return new User(id, name, surname, email, password, license, role);
                 } else {
                     return null;
                 }
@@ -111,11 +98,8 @@ public class UserDAO {
         }
     }
 
-    // "Get all" methods : FIXME forse alcune da spostare in AdminDAO
-    private void getUsersFromQuery(String selectSQL, List<User> userList) throws SQLException { // to avoid code duplication
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)){
-
+    private void getUsersFromQuery(String selectSQL, List<User> userList) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     int id = resultSet.getInt("id");
@@ -132,6 +116,7 @@ public class UserDAO {
         }
     }
 
+    // "Get all" methods : FIXME forse alcune da spostare in AdminDAO
     public List<User> getAllUsers() throws SQLException {
         String selectSQL = "SELECT * FROM \"User\""; //FIXME: sarebbe meglio cambiare * con i nomi degli attributi necessari
 
@@ -177,10 +162,9 @@ public class UserDAO {
     }
 
     // Update Methods
-    private static void updateQuery(int user_id, String newVal, String updateSQL) throws SQLException {
+    private void updateQuery(int user_id, String newVal, String updateSQL) throws SQLException {
         // query must have two parameters: user_id  and newVAL in this exact order
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL))
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateSQL))
         {
             preparedStatement.setString(1, newVal);
             preparedStatement.setInt(2, user_id); //
@@ -201,8 +185,7 @@ public class UserDAO {
     }
     public boolean hasLicense(int user_id) throws SQLException {
          String selectSQL = "SELECT license FROM \"User\" WHERE id = ?";
-         try (Connection connection = ConnectionManager.getConnection();
-              PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+         try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
                 preparedStatement.setInt(1, user_id);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
@@ -218,20 +201,14 @@ public class UserDAO {
     // Delete Methods
     public void removeUserByID(int id) throws SQLException { // FIXME: dovrebbe fare cascata su bookings e licenses
         String deleteSQL = "DELETE FROM \"User\" WHERE id = ?";
-
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL))
-        {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
         }
     }
     public void removeUserByEmail(String email) throws SQLException { // FIXME: dovrebbe fare cascata su bookings e licenses
         String deleteSQL = "DELETE FROM \"User\" WHERE email = ?";
-
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL))
-        {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.setString(1, email);
             preparedStatement.executeUpdate();
         }
@@ -243,10 +220,7 @@ public class UserDAO {
 
     public void removeAllUsers() {
         String deleteSQL = "DELETE FROM \"User\"";
-
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL))
-        {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

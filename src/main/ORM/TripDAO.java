@@ -6,16 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TripDAO {
-    //ConnectionManager cm;
+    private Connection connection;
     public TripDAO() {
-        //this.cm = new ConnectionManager();
+        try {
+            this.connection = ConnectionManager.getInstance().getConnection();
+        } catch (SQLException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 
     // Create Methods
     public Trip insertTrip(Location origin, Location destination, Date date, Time time, User driver, Vehicle vehicle) throws SQLException {
         String insertSQL = "INSERT INTO trip (origin, destination, date, time, state, driver, vehicle) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setInt(1, origin.getId());
             preparedStatement.setInt(2, destination.getId());
             preparedStatement.setDate(3, date);
@@ -67,8 +70,7 @@ public class TripDAO {
 
     public Trip findById(int tripId) throws SQLException {
         String selectSQL = "SELECT * FROM trip WHERE id = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
             preparedStatement.setInt(1, tripId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -81,8 +83,7 @@ public class TripDAO {
     }
 
     private List<Trip> getTripsFromQuery(String selectSQL) throws SQLException {
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Trip> trips = new ArrayList<>();
             while (resultSet.next()) {
@@ -122,8 +123,7 @@ public class TripDAO {
 
     public void updateTrip(Trip oldTrip, Trip newTrip) throws SQLException {
         String updateSQL = "UPDATE trip SET origin = ?, destination = ?, date = ?, time = ?, driver = ?, vehicle = ?, state = ? WHERE id = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateSQL)) {
             //preparedStatement.setInt(1, newTrip.getId());
             preparedStatement.setInt(1, newTrip.getOrigin().getId());
             preparedStatement.setInt(2, newTrip.getDestination().getId());
@@ -165,8 +165,7 @@ public class TripDAO {
 
     public void removeTrip(int tripId) throws SQLException {
         String deleteSQL = "DELETE FROM trip WHERE id = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.setInt(1, tripId);
             preparedStatement.executeUpdate();
         }
@@ -179,12 +178,11 @@ public class TripDAO {
         else return 0; // TODO: gestire errore
     }
 
+    // Utility method to remove all trips
     public void removeAllTrips() throws SQLException {
-        String deleteSQL = "DELETE FROM trip";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
+        String sql = "DELETE FROM trip";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.executeUpdate();
         }
     }
 }
-

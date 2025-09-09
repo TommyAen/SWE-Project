@@ -5,19 +5,24 @@ import main.DomainModel.*;
 import java.sql.PreparedStatement;
 import java.sql.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VehicleDAO {
-    //private final ConnectionManager cm;
+    private Connection connection;
+
     public VehicleDAO() {
-        //this.cm = new ConnectionManager();
+        try {
+            this.connection = ConnectionManager.getInstance().getConnection();
+        } catch (SQLException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 
     // Create Methods
     public Vehicle insertVehicle(int capacity, Vehicle.VehicleState state, Location location) throws SQLException {
         String insertSQL = "INSERT INTO vehicle (capacity, state, location) VALUES ( ?, ?, ?)";
-        try(Connection connection=ConnectionManager.getConnection();
-            PreparedStatement preparedStatement=connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
+        try(PreparedStatement preparedStatement=connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setInt(1, capacity);
             preparedStatement.setString(2, state.toString());
             preparedStatement.setInt(3, location.getId());
@@ -41,8 +46,7 @@ public class VehicleDAO {
     // Read Methods
     public Vehicle findById(int id) throws SQLException {
         String selectSQL = "SELECT * FROM vehicle WHERE id = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -61,8 +65,7 @@ public class VehicleDAO {
     }
     public List<Vehicle> findInLocation(Location location) throws SQLException {
         String selectSQL = "SELECT * FROM vehicle WHERE location = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
             preparedStatement.setInt(1, location.getId());
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 List<Vehicle> vehicles = new java.util.ArrayList<>();
@@ -78,8 +81,7 @@ public class VehicleDAO {
     }
     public List<Vehicle> findAvailable() throws SQLException {
         String selectSQL = "SELECT * FROM vehicle WHERE state != 'OUT_OF_SERVICE'";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             List<Vehicle> vehicles = new java.util.ArrayList<>();
             LocationDAO locationDAO = new LocationDAO();
@@ -95,10 +97,17 @@ public class VehicleDAO {
         }
     }
     public List<Vehicle> findAvailableInLocation(Location location) throws SQLException {
-        List<Vehicle> vehicles = findAvailable();
-        for(Vehicle v: vehicles) {
-            if(v.getLocation().getId() != location.getId()) {
-                vehicles.remove(v);
+        List<Vehicle> vehicles = new ArrayList<>();
+        String selectSQL = "SELECT * FROM vehicle WHERE location = ? AND state != 'OUT_OF_SERVICE'";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+            preparedStatement.setInt(1, location.getId());
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int vehicleId = resultSet.getInt("id");
+                    int capacity = resultSet.getInt("capacity");
+                    Vehicle.VehicleState state = Vehicle.VehicleState.valueOf(resultSet.getString("state"));
+                    vehicles.add(new Vehicle(vehicleId, capacity, state, location));
+                }
             }
         }
         return vehicles;
@@ -107,8 +116,7 @@ public class VehicleDAO {
     // Update Methods
     public void updateVehicle(int vehicleId, Vehicle newVehicle) throws SQLException {
         String updateSQL = "UPDATE vehicle SET capacity = ?, state = ?, location = ? WHERE id = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateSQL)) {
             preparedStatement.setInt(1, newVehicle.getCapacity());
             preparedStatement.setString(2, newVehicle.getState().toString());
             if (newVehicle.getLocation() != null) {
@@ -133,8 +141,7 @@ public class VehicleDAO {
     // Delete Methods
     public void removeVehicle(int vehicleId) throws SQLException {
         String deleteSQL = "DELETE FROM vehicle WHERE id = ?";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.setInt(1, vehicleId);
             preparedStatement.executeUpdate();
         }
@@ -142,8 +149,7 @@ public class VehicleDAO {
 
     public void removeAllVehicles() throws SQLException {
         String deleteSQL = "DELETE FROM vehicle";
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.executeUpdate();
         }
     }
