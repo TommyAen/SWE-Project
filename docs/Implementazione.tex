@@ -43,16 +43,14 @@ CREATE TABLE Trip (
     FOREIGN KEY (vehicle) REFERENCES Vehicle(id)
 );
 \end{lstlisting}
-\subsubsection{Vincoli di Integrità}
-Il database implementa vincoli referenziali e di dominio per garantire la consistenza:
-\begin{itemize}
-\item Foreign key con cascading per mantenere l'integrità referenziale
-\item Check constraints per validare valori numerici positivi
-\item Unique constraints per email e patenti
-\item Default values per semplificare le operazioni di inserimento
-\end{itemize}
 \subsubsection{Dati di Default}
 Il sistema include uno script \texttt{default-unifi} che popola il database con le sedi reali dell'Università di Firenze:
+\begin{lstlisting}[style=sql, caption={Esempio inserimento dati di default per le location}]
+INSERT INTO Location (name, address) VALUES
+('Rettorato - UNIFI', 'Piazza San Marco, 4, 50121 Firenze FI'),
+('Facolt@ di Ingegneria', 'Via Santa Marta, 3, 50139 Firenze FI'),
+ ('Centro Didattico Morgagni', 'Viale Morgagni, 65, 50134 Firenze FI'),
+\end{lstlisting}
 \begin{lstlisting}[style=sql, caption={Esempio inserimento dati di default per le location}]
 INSERT INTO Location (name, address) VALUES
 ('Rettorato - UNIFI', 'Piazza San Marco, 4, 50121 Firenze FI'),
@@ -208,6 +206,6 @@ Ogni metodo amministrativo implementa controlli di autorizzazione per garantire 
 \subsubsection{VehicleController e LocationController}
 Queste due classi implementano la logica per le operazioni di gestione dei veicoli e delle sedi.
 
-\section{Interfaccia CLI}
+\subsection{Interfaccia CLI}
 Un semplice esempio di interfaccia a linea di comando (CLI) è stata implementata nel file \texttt{src.Main} e fornisce un modo intuitivo per interagire con il sistema. La CLI guida l'utente attraverso una serie di pagine, consentendo di eseguire le operazioni principali del sistema come descritto in sez \ref{subsec:PageNavigation}.\\
 
