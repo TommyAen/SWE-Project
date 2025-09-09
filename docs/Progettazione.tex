@@ -5,24 +5,24 @@ Abbiamo individuato come attori principali i seguenti:
     \item \textbf{Studente}: utente a cui è rivolto principalmente l'applicativo; 
     \item \textbf{Admin}:  utente autorizzato alla gestione delle risorse e degli utenti
 \end{itemize}
-Gli studenti devono avere la possibilità di creare un profilo, nel quale dovranno inserire i propri dati, e successivamente avranno la possibilità di aggiungersi a viaggi già esistenti o crearne nuovi, indicando data, orario, sede di partenza e sede di arrivo; devono aver la possibilità di modificare o cancellare le proprie prenotazioni, e le proprie credenziali.
-\\L'admin invece deve avere totale controllo delle risorse disponibili, per avere la possibilità di aggiungere o eliminare navette in caso di guasti o di nuove disponibilità, e cancellare o modificare i viaggi. Deve avere anche la possibilità di gestire i profili utenti, potendo revocare la possibilità di guida o rimuovere profili.
+Gli studenti avranno la possibilità di creare un profilo, nel quale dovranno inserire i propri dati, e successivamente potranno aggiungersi a viaggi già esistenti o crearne nuovi, indicando data, orario, sede di partenza e sede di arrivo; devono poter modificare o cancellare le proprie prenotazioni, e le proprie credenziali.
+\\L'admin invece deve avere totale controllo delle risorse disponibili, potendo aggiungere o eliminare navette in caso di guasti o di nuove disponibilità, e cancellare o modificare i viaggi. Deve avere anche la possibilità di gestire i profili utenti, revocare la possibilità di guida o rimuovere profili.
 \subsection{Use Case Diagrams}
-I seguenti sono gli Use Case diagrams trovati, contenendo i casi d'uso più importanti riguardanti gli attori \textit{Student} (Vedi fig \ref{fig:ucstud}), e \textit{Admin} (vedi fig.\ref{fig:ucadmin}):
+I seguenti sono gli Use Case diagrams trovati, contenendo i casi d'uso più importanti riguardanti gli attori \textit{Student} (Vedi fig \ref{fig:ucSTU}), e \textit{Admin} (vedi fig.\ref{fig:ucADM}):
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{Images/Student UC.png}
     \caption{Use Case diagram per \textit{Studente}}
-    \label{fig:ucstud}
+    \label{fig:ucSTU}
 
     \vspace{0.5cm}
 
     \centering
-    \includegraphics[width=1\linewidth]{Images/Admin UC diag.png}
+    \includegraphics[width=1\linewidth]{Images/Admin UC.png}
     \caption{Use Case diagram per Admin}
-    \label{fig:ucadmin}
+    \label{fig:ucADM}
 \end{figure}
-\subsection{Use Case Template}
+\subsection{Use Case Template}\label{subsec:usecaseTemplate}
 Di seguito sono riportati gli use case template per i principali casi d'uso del progetto; ognuno di questi descrive in modo strutturato alcune funzionalità del sistema.
 
 
@@ -48,7 +48,7 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
 \end{table}
 }
 % Use Case 1
-\UseCase
+\UseCase 
 {1}
 {Studente - Registrazione}
 {Lo studente crea un nuovo account sull'applicazione.}
@@ -60,15 +60,16 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
 \end{description}}
 {\begin{description}[nosep]
     \item[1.] Utente seleziona "Registrati"
-    \item[2.] Sistema mostra il form di registrazione
+    \item[2.] Sistema mostra il form di registrazione (vedi mockup \ref{mockUp:registerMockup})
     \item[3.] L'utente inserisce i dati richiesti
     \item[4.] Conferma la registrazione
+    \item[5.] Viene fatto il login automatico
 \end{description}}
 {\begin{description}[nosep]
-    \item[3a.] Lo studente ha la patente B → se la aggiunge potrà essere un guidatore
-    \item[3b.] Dati incompleti/errati → sistema mostra errore
+    \item[4a.] Dati non validi → sistema mostra errore
 \end{description}}
-{L'account dello studente è creato e può accedere al sistema}
+{L'account dello studente è creato e salvato nel database}
+\label{uc:uc1}
 
 % Use Case 2
 \UseCase
@@ -77,18 +78,16 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
 {Lo studente cerca viaggi già programmati per una specifica tratta e fascia oraria.}
 {User Goal}
 {Studente}
-{Lo studente ha effettuato l'accesso al sistema.}
+{Lo studente ha effettuato l’accesso all’applicazione e si trova nella schermata principale.}
 {\begin{description}[nosep]
-    \item[1.] Dalla pagina principale, lo studente sceglie l'opzione per cercare un viaggio
-    \item[2.] Lo studente inserisce la sede di partenza, arrivo e fascia oraria
-    \item[3.] Il sistema ricerca viaggi compatibili nel database
-    \item[4.] Il sistema propone i viaggi con i dati scelti
+    \item[1.] Dalla pagina principale, lo studente sceglie l'opzione per visualizzare i viaggi disponibili (vedi mockup \ref{mockUp:viewTrips})
+    \item[2.] Lo studente inserisce la sedi di partenza e arrivo, il giorno e la fascia oraria
+    \item[3.] Il sistema mostra i viaggi compatibili
 \end{description}}
 {\begin{description}[nosep]
-    \item[4a.] Nessun viaggio compatibile → sistema mostra "Nessun viaggio trovato" e opzioni per creare nuovo viaggio/richiesta
+    \item[3a.] Nessun viaggio compatibile con i criteri di ricerca → sistema mostra opzioni per creare nuovo viaggio (vedi mockup \ref{mockUp:createTrip})
 \end{description}}
-{Il sistema mostra la lista dei viaggi compatibili con i criteri di ricerca}
-
+{L'utente visualizza la lista dei viaggi disponibili per i criteri scelti} 
 % Use Case 3
 \UseCase
 {3}
@@ -96,22 +95,22 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
 {Lo studente si unisce a un viaggio esistente come passeggero.}
 {User Goal}
 {Studente}
-{Lo studente sta visualizzando la lista dei viaggi disponibili.}
+{Lo studente sta visualizzando la lista dei viaggi disponibili (vedi mockup \ref{mockUp:viewTrips}).}
 {\begin{description}[nosep]
-    \item[1.] Dalla lista viaggi, lo studente seleziona un viaggio
+    \item[1.] Lo studente seleziona un viaggio
     \item[2.] Premendo "Aggiungiti", il sistema verifica disponibilità
     \item[3.] Il sistema associa la prenotazione e decrementa posti disponibili
     \item[4.] Sistema mostra la conferma della prenotazione
 \end{description}}
 {\begin{description}[nosep]
-    \item[3a.] Posti esauriti → sistema mostra messaggio e aggiorna lista
+    \item[2a.] Viaggio pieno → sistema mostra errore
 \end{description}}
 {Lo studente è stato aggiunto come passeggero al viaggio scelto}
-
+\label{uc:uc3}
 % Use Case 4
 \UseCase
 {4}
-{Crea Nuovo Viaggio (come Guidatore)}
+{Crea Nuovo Viaggio}
 {Lo studente crea un nuovo viaggio proponendosi come guidatore.}
 {User Goal}
 {Studente (Guidatore)}
@@ -130,13 +129,13 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
     \item[3a.] Viaggio identico creato da altri → sistema annulla e propone di unirsi
 \end{description}}
 {Un nuovo viaggio è stato creato con lo studente come guidatore}
-
+\label{uc:uc4}
 % Use Case 5
 \UseCase
 {5}
 {Admin - Elimina Utente}
 {L’amministratore elimina un account utente.}
-{Amministratore}
+{User Goal}
 {Admin}
 {L’utente è registrato nel sistema.}
 {\begin{description}[nosep]
@@ -150,13 +149,13 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
     \item[3a.] L’utente ha prenotazioni future → sistema richiede conferma aggiuntiva
 \end{description}}
 {L’utente è rimosso dal sistema, incluse eventuali prenotazioni}
-
+\label{uc:uc5}
 % Use Case 6
 \UseCase
 {6}
 {Admin - Aggiungi Navetta}
 {L’admin registra una nuova navetta nel sistema.}
-{Amministratore}
+{Function}
 {Admin}
 {L’admin è autenticato e c'è un nuovo mezzo.}
 {\begin{description}[nosep]
@@ -171,11 +170,8 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
     \item[3a.] La navetta è già presente → impedisce duplicazione
 \end{description}}
 {La navetta è disponibile per l’assegnazione ai gruppi}
-
-
-
-
-\subsection{Page Navigation Diagram}
+\label{uc:uc6}
+\subsection{Page Navigation Diagram}\label{subsec:PageNavigation}
 Nel seguente diagramma sono riportate le possibili azioni che un utente può compiere, mostrando i modi con il quale si può navigare tra le pagine
 \begin{figure}[H]
     \centering
@@ -191,14 +187,14 @@ Di seguito mostriamo alcune rappresentazioni grafiche di una possibile implement
         \centering
         \includegraphics[width=\linewidth]{Images/Login Page.png}
         \caption{Schermata di login}
-        \label{fig:loginMockup}
+        \label{mockUp:loginMockup}
     \end{minipage}%
     \hfill
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=\linewidth]{Images/Register page.png}
         \caption{Schermata di registrazione}
-        \label{fig:registerMockup}
+        \label{mockUp:registerMockup}
     \end{minipage}
 \end{figure}
 
@@ -209,28 +205,28 @@ Di seguito mostriamo alcune rappresentazioni grafiche di una possibile implement
         \centering
         \includegraphics[width=\linewidth]{Images/Crea tragitto.png}
         \caption{Schermata di creazione tragitto}
-        \label{fig:createTrip}
+        \label{mockUp:createTrip}
     \end{minipage}%
     \hfill
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=\linewidth]{Images/Tragitti disponibili.png}
         \caption{Schermata di visualizzazione dei tragitti}
-        \label{fig:viewTrips}
+        \label{mockUp:viewTrips}
     \end{minipage}
 \end{figure}
 
 \section{Class Diagram}
 Vista la progettazione a tre livelli, di seguito sono riportati i diagrammi delle classi per ciascuno dei modelli.
-\subsubsection{Domain Model}\label{subsec:DM}
-Il Domain Model ha il compito di definire le entità concettuali fondamentali del dominio dell'applicazione; le sue classi rappresentano i concetti del "\textit{mondo reale"}, ed infatti le istanze di queste saranno utilizzati negli altri layer dell'applicazione per eseguire elaborazioni sui dati senza richiedere un accesso diretto al database; solitamente sono implementate come \textit{POJO} (\textit{Plain Old Java Object}), ed infatti non implementano nessun tipo di logica di business, lasciando questo compito agli altri strati.
+\subsection{Domain Model}\label{subsec:DM}
+Il Domain Model ha il compito di definire le entità concettuali fondamentali del dominio dell'applicazione; le sue classi rappresentano i concetti del "\textit{mondo reale}", infatti le istanze saranno utilizzate negli altri layer dell'applicazione per eseguire elaborazioni sui dati senza richiedere un accesso diretto al database; solitamente sono implementate come \textit{POJO} (\textit{Plain Old Java Object}), non implementando nessun tipo di metodi oltre a getters e setters.
 Le entità principali che abbiamo individuato sono le seguenti:
 \begin{itemize}
     \item \textbf{User}: è la classe che rappresenta gli utenti; abbiamo deciso di distinguere studenti ed admin tramite l'uso di un attributo UserRole dato che in questo contesto condividono  tutti gli altri attributi, ma nello strato di business avranno diversi privilegi operativi
-    \item \textbf{Trip}: per rappresenta un viaggio organizzato incapsulando tutte le informazioni sul viaggio tra cui: origine, destinazione, data, orario, guidatore assegnato e veicolo
-    \item \textbf{Booking}: modella le prenotazioni fatte dagli studenti per i viaggi; in questa non abbiamo deciso di non mettere data e orario perché sarebbe stata una duplicazione essendo già presenti nella classe Trip
-    \item \textbf{Location}: modella le sedi universitarie avendo come attributi le informazioni
-    \item \textbf{Vehicle}: rappresenta le navetti che verranno usate nei viaggi
+    \item \textbf{Trip}: rappresenta un viaggio organizzato incapsulando tutte le informazioni sul viaggio tra cui: origine, destinazione, data, orario, guidatore assegnato e veicolo
+    \item \textbf{Booking}: modella le prenotazioni fatte dagli studenti per i viaggi; in questa abbiamo deciso di non mettere data e orario perché sarebbe stata una duplicazione essendo già presenti nell'attributo di tipo Trip
+    \item \textbf{Location}: modella le sedi universitarie tra cui gli studenti possono spostarsi
+    \item \textbf{Vehicle}: rappresenta le navette che verranno usate nei viaggi
 \end{itemize}
 Nel seguente diagramma di classe vengono visualizzate le relazioni di composizione tra le classi.
 \begin{figure}[H]
@@ -239,10 +235,10 @@ Nel seguente diagramma di classe vengono visualizzate le relazioni di composizio
     \caption{Domain Model class diagram}
     \label{fig:DMdiag}
 \end{figure}
-\subsubsection{ORM}\label{subsec:ORM}
-Questo livello ha il compito di gestire l'interazione con il database scelto; viene implementato il design pattern DAO (\textit{Data Access Object}) fornendo un livello di astrazione utile per separare la logica di accesso ai dati nel database dalle operazioni di controllo e logica del dominio applicativo.
-Questo permette di poter usare la stessa business logic su diversi database solamente cambiando la struttura dei DAO, eliminando l'accoppiamento tra i due strati.\\
-Nel ORM sono presenti quindi un DAO per ogni entità del Domain Model, ognuno dei quali implementa i metodi di CRUD, e una classe di utilità ConnectionManager che centralizza il collegamento con il database scelto, facilitando eventuali modifiche alla configurazione del database senza modificare gli altri componenti.
+\subsection{ORM}\label{subsec:ORM}
+Questo livello ha il compito di gestire l'interazione con il database scelto; viene implementato il design pattern DAO (\textit{Data Access Object}) fornendo un livello di astrazione utile per separare la logica di accesso ai dati nel database dalle operazioni di controllo e le entità del dominio applicativo.
+Questo approccio consente di riutilizzare la stessa logica di business su diversi database, modificando unicamente l’implementazione dei DAO e riducendo così l’accoppiamento tra i livelli.\\
+Nel livello ORM è presente un DAO per ciascuna entità del Domain Model, ognuno dei quali implementa le operazioni CRUD. Inoltre, una classe di utilità denominata ConnectionManager centralizza la gestione della connessione al database, semplificando eventuali modifiche di configurazione senza impattare gli altri componenti.
 Di seguito viene riportato il diagramma delle classi
 \begin{figure}[H]
     \centering
@@ -250,8 +246,8 @@ Di seguito viene riportato il diagramma delle classi
     \caption{ORM class daig}
     \label{fig:ORMdiag}
 \end{figure}
-\subsubsection{Business Logic}\label{subsec:BL}
-La Business Logic rappresenta la parte logica/operativa dell'applicativo; in questa vengono definite e implementate le regole di business e le operazioni di controllo, coordinando tutte le possibili operazioni.\\
+\subsection{Business Logic}\label{subsec:BL}
+La Business Logic rappresenta la parte logica/operativa dell'applicazione; in questa vengono definite e implementate le regole di business e le operazioni di controllo, coordinando tutte le possibili operazioni.\\
 Questo strato fa quindi uso dei DAO per l'accesso ai dati persistenti e delle classi del Domain Model per l'elaborazione delle informazioni dei calcoli.
 \begin{figure}[H]
     \centering
@@ -260,25 +256,24 @@ Questo strato fa quindi uso dei DAO per l'accesso ai dati persistenti e delle cl
     \label{fig:BLdiag}
 \end{figure}
 
-\subsection{Diagramma ER e schema relazionale}
-Per la progettazione del database abbiamo realizzato un diagramma ER (vedi fig. \ref{fig:ERdiag}, lo abbiamo trasformato in una rappresentazione più comprensibile (vedi fig. \ref{fig:ERraw}, e successivamente abbiamo costruito lo schema relazionale (vedi fig. \ref{fig:ERscheme}).
-\begin{figure}
+\subsection{Diagramma ER e schema relazionale}\label{subsec:DB}
+Per la progettazione del database abbiamo realizzato un diagramma ER (vedi fig. \ref{fig:ERdiag}), lo abbiamo trasformato in una rappresentazione più comprensibile (vedi fig. \ref{fig:ERraw}), e successivamente abbiamo costruito lo schema relazionale (vedi lstlisting \ref{lst:ERscheme}).
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{Images/ER_diagram.png}
     \caption{ER diagram}
     \label{fig:ERdiag}
 \end{figure}
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{Images/ERraw.png}
-    \caption{ER raw}
+    \caption{ER diagram (rappresentazione semplificata)}
     \label{fig:ERraw}
 \end{figure}
-
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \includegraphics[width=1\linewidth]{Images/schema_relazionale.png}
-    \caption{Schema Relazionale}
+    \includegraphics[width=0.7\linewidth]{Images/schema_relazionale.png}
+    \caption{Schema relazionale}
     \label{fig:ERscheme}
 \end{figure}
-Come si può  vedere dai dia
+Come si può  vedere dai diagrammi, il modello ER è stato tradotto in tabelle relazionali, mantenendo le stesse entità e relazioni.

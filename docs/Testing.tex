@@ -1,91 +1,41 @@
 \section{Testing}
 
-Per verificare il corretto funzionamento del progetto, sono stati realizzati dei test funzionali sia sul livello di Business Logic sia sul livello di ORM, con l'obiettivo di verificare il corretto funzionamento dei metodi principali e delle operazioni di persistenza dei dati.
-I test sono stati sviluppati con JUnit 5, e ciascuna classe di test si occupa di ripulire i dati inseriti nel database al termine dell'esecuzione, garantendo così l'indipendenza tra i test.
-Per alcune classi sono stati mostrati solo i test più rappresentativi, mentre i test aggiuntivi, inclusi casi limite e casi di errore, sono descritti nella legenda degli snippet.
-
-\subsection{Business Logic Test} \label{subsec:business-logic-test}
-
-Sono stati implementati i seguenti test nelle seguenti classi:
+Per verificare il corretto funzionamento del progettoI test sono stati suddivisi in due categorie principali:
 \begin{itemize}
-    \item \texttt{UserControllerTest}: \texttt{testRegister()}, \texttt{testDeleteThisProfile()}, \texttt{testDeleteProfile()}, \texttt{testLogin()}, \texttt{testLoginFail()}.
-    \item \texttt{TripControllerTest}: \texttt{createTrip()}, \texttt{findById()}, \texttt{modifyTrip()}, \texttt{cancelTrip()}, \texttt{getAvailableSeatsAndIsFull()}, \texttt{createTripWithPastDate()}, \texttt{cancelTripNonExistent()}.
-    \item \texttt{BookingControllerTest}: \texttt{bookAndCancel()} (da implementare con DAO mock).
+    \item Test di Business Logic: Verificano il corretto funzionamento dei controller che gestiscono la logica di business del sistema.
+    \item Test ORM: Verificano la corretta persistenza dei dati nel database attraverso le classi DAO.
 \end{itemize}
-
-\noindent I test della classe \texttt{UserControllerTest} verificano il corretto funzionamento dei metodi di registrazione, login e cancellazione del profilo utente, comprese le situazioni di errore come credenziali non valide. I metodi \texttt{testDeleteThisProfile()} e \texttt{testDeleteProfile()} garantiscono che l'utente venga rimosso correttamente dal database e che la sessione di autenticazione venga terminata.
-
-\noindent I test della classe \texttt{TripControllerTest} coprono la creazione, modifica, ricerca e cancellazione dei viaggi, includendo casi limite come la creazione di viaggi con date passate o la cancellazione di viaggi inesistenti. Inoltre, vengono verificati i metodi di gestione dei posti disponibili e lo stato di pieno dei veicoli.
-
-\noindent I test della classe \texttt{BookingControllerTest} verificano la creazione e cancellazione delle prenotazioni, assicurando la coerenza tra Business Logic e database.
-
-\begin{lstlisting}[style=java, caption={Registrazione di un utente in UserControllerTest}]
+Abbiamo deciso di non fare test su Domain Model in quanto contiene classi che contengono solo attributi e metodi getter-setter, senza logica complessa da testare, e non presentano dipendenze esterne.\\
+I test sono stati sviluppati con JUnit 5, e ciascuna classe di test si occupa di ripulire i dati inseriti nel database al termine dell'esecuzione, garantendo così l'indipendenza tra i test.\\
+Negli unit test è stato usato il pattern di \textit{Dependency Injection} per iniettare le dipendenze necessarie alle classi da testare, facilitando così l'isolamento delle unità di codice.\\
+\begin{lstlisting}[style=java, caption={Esempio di Dependency Injection in UserControllerTest}]
+@BeforeEach
+void setUp() {
+    userDAO = new UserDAO();
+    authController = new AuthController(userDAO);
+    userController = new UserController(userDAO, authController);
+    // creazione di un oggetto User per i test
+}
 @Test
 void testRegister() throws SQLException {
-    userController.register(1, "John", "Doe", "john.doe@example.com", "password123", "B12345", User.UserRole.STUDENT);
-    User registeredUser = userDAO.findById(1);
+    userController.register(1, "Prova", "Register", "prova.register@example.com", "password123", "B12345");
+    User registeredUser = userDAO.findById(1); // recupero dell'utente registrato dal database
     assertNotNull(registeredUser);
-    assertEquals("John", registeredUser.getName());
+    assertEquals("Prova", registeredUser.getName());
     authController.loginById(1, "password123");
     assertTrue(authController.isLoggedIn());
 }
 \end{lstlisting}
-
-\begin{lstlisting}[style=java, caption={Creazione di un viaggio in TripControllerTest}]
-@Test
-void createTrip() {
-    Location origin = locationDAO.addLocation(new Location("Origin", "Addr1", 5));
-    Location destination = locationDAO.addLocation(new Location("Destination", "Addr2", 5));
-    Vehicle vehicle = vehicleDAO.insertVehicle(new Vehicle(4, Vehicle.VehicleState.WORKING, origin));
-    Trip trip = tripController.createTrip(vehicle.getId(), origin, destination, Date.valueOf("2025-09-07"), Time.valueOf("10:00:00"));
-    assertNotNull(trip);
-    assertEquals("Origin", trip.getOrigin().getName());
-    assertEquals("Destination", trip.getDestination().getName());
-}
-\end{lstlisting}
-
-\subsection{ORM Test} \label{subsec:orm-test}
-
-Sono stati implementati i seguenti test nelle seguenti classi:
+\subsection{Test riguardanti casi d'uso}
+Per ogni caso d'uso descritto nella sezione \ref{subsec:usecaseTemplate} sono stati implementati test specifici per verificare il corretto funzionamento delle funzionalità principali del sistema: di sotto viene riportato il mapping tra i test fatti e la descrizione dei casi d'uso.
 \begin{itemize}
-    \item \texttt{UserDAOTest}: \texttt{insertUser()}, \texttt{updateUserEmail()}, \texttt{findUserByID()}, \texttt{addLicense()}, \texttt{removeLicense()}, \texttt{removeUserByID()}.
-    \item \texttt{TripDAOTest}: \texttt{insertTrip()}, \texttt{findById()}, \texttt{updateTripDate()}.
-    \item \texttt{LocationDAOTest}: \texttt{addLocation()}, \texttt{findByName()}, \texttt{updateCapacity()}, \texttt{updateCapacityNegative()}, \texttt{removeLocation()}.
-    \item \texttt{VehicleDAOTest}: \texttt{insertVehicle()}, \texttt{findInLocation()}, \texttt{findAvailableInLocation()}, \texttt{updateStatus()}, \texttt{removeVehicle()}.
+    \item \texttt{testRegister} → UC-1
+    \item \texttt{testViewAvailableTrips} → UC-2
+    \item \texttt{testJoinTrip} → UC-3
+    \item \texttt{testCreateNewTrip} → UC-4
+    \item \texttt{testDeleteUser} → UC-5
+    \item \texttt{testAddVehicle} → UC-6
 \end{itemize}
+\subsection{Elenco dei unit test implementati}
 
-\noindent I test delle classi DAO verificano la corretta persistenza dei dati nel database, coprendo tutte le operazioni CRUD. Sono stati aggiunti anche test per casi limite, come la modifica della capacità di una location con valori negativi, o la ricerca di veicoli disponibili filtrando quelli fuori servizio. I metodi \texttt{findById()} e \texttt{updateTripDate()} della classe \texttt{TripDAOTest} garantiscono la corretta gestione degli aggiornamenti e delle ricerche nel database.
-
-\begin{lstlisting}[style=java, caption={Inserimento di un utente in UserDAOTest}]
-@Test
-void insertUser() throws SQLException {
-    userDAO.insertStudent(12345, "Mario", "Rossi", "mariorossi@prova.com", "password123");
-    User user = userDAO.findById(12345);
-    assertEquals("Mario", user.getName());
-    assertEquals("Rossi", user.getSurname());
-}
-\end{lstlisting}
-
-\begin{lstlisting}[style=java, caption={Aggiunta di una location in LocationDAOTest}]
-@Test
-void addLocation() {
-    Location location = locationDAO.addLocation(new Location("Test Location", "123 Test St", 10));
-    Location retrieved = locationDAO.findById(location.getId());
-    assertNotNull(retrieved);
-    assertEquals("Test Location", retrieved.getName());
-}
-\end{lstlisting}
-
-\begin{lstlisting}[style=java, caption={Inserimento di un veicolo in VehicleDAOTest}]
-@Test
-void insertVehicle() {
-    Vehicle v = new Vehicle(20, Vehicle.VehicleState.WORKING, location);
-    Vehicle found = vehicleDAO.insertVehicle(v);
-    assertNotNull(found);
-    assertEquals(20, found.getCapacity());
-    assertEquals(Vehicle.VehicleState.WORKING, found.getState());
-}
-\end{lstlisting}
-
-\noindent La combinazione dei test di Business Logic e dei test ORM assicura che i metodi principali del sistema funzionino correttamente sia a livello di logica applicativa sia a livello di gestione dei dati, garantendo l’integrità e la consistenza del database.  
 

@@ -1,0 +1,97 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+\usepackage[italian]{babel}
+\graphicspath{{Images/}}
+\usepackage{float}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+\usepackage{tabularx, xcolor, booktabs, enumitem, hyperref}
+%Stile per Java
+\lstdefinestyle{java}{
+  language=Java,
+  basicstyle=\ttfamily\footnotesize,    % font monospaced piccolo
+  keywordstyle=\color{blue}\bfseries,   % parole chiave blu e in grassetto
+  stringstyle=\color{teal},             % stringhe verde acqua
+  commentstyle=\color{gray},            % commenti grigi
+  %numbers=left,                         % numeri di riga a sinistra
+  %numberstyle=\tiny,                    % numeri piccoli
+  %stepnumber=1,                         % numerazione ogni riga
+  showstringspaces=false,               % non mostra spazi nelle stringhe
+  tabsize=4,                            % tab = 4 spazi
+  breaklines=true,                      % va a capo automaticamente
+  frame=single,                         % cornice attorno al codice
+  %rulecolor=\color{black!30},           % colore bordo
+  %captionpos=b                          % caption sotto
+}
+%Stile per SQL
+\lstdefinestyle{sql}{
+  language=SQL,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue}\bfseries,
+  stringstyle=\color{teal},
+  commentstyle=\color{gray},
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  breaklines=true,
+  frame=single,
+  showstringspaces=false
+}
+\definecolor{grey}{rgb}{0.9,0.9,0.9}
+
+
+\title{\textbf{Carsharing Management Between University Campuses}}
+\author{Tommaso Bellucci, Edoardo Rustichini, Tiziano Talini}
+\date{2024/2025}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{figure}[h]
+            \centering  
+            \includegraphics[width=0.8\textwidth]{Images/Unifi logo.png}
+    \end{figure}
+
+    \begin{center}
+        \large{UNIVERSITÀ DEGLI STUDI DI FIRENZE}
+        \vspace{1mm}\\
+        \large{DIPARTIMENTO DI INGEGNERIA DELL'INFORMAZIONE}
+    \end{center}
+
+    \vspace{10mm}
+    \begin{center}
+        \LARGE{Carsharing Management Between University Campuses}
+    \end{center}
+    \vspace{10mm}
+
+    \begin{minipage}[t]{0.45\textwidth}
+        \textit{Autori}\vspace{2mm}\\ Tommaso Bellucci \vspace{1mm}\\ Edoardo Rustichini \vspace{1mm} \\Tiziano Talini \vspace{3mm}\\
+        \textit{N$^{\circ}$ Matricola} \vspace{2mm}\\
+        7072924 \vspace{1mm} \\ 7076614 \vspace{1mm} \\ 7079207
+    \end{minipage}
+    \begin{minipage}[t]{0.45\textwidth}\raggedleft
+        \textit{Corso Principale} \vspace{2mm}\\
+        Ingegneria del Software \vspace{3mm}\\
+        \textit{Docente corso} \vspace{2mm}\\
+        Enrico Vicario \vspace{3mm}\\
+        \textit{Anno Accademico} \vspace{2mm}\\
+        2024/2025
+    \end{minipage}
+\end{titlepage}
+\newpage
+\tableofcontents
+\newpage
+
+\include{Intro}
+
+\include{Progettazione}
+
+\include{Implementazione}
+
+\include{Testing}
+\include{Notes}
+
+
+\end{document}
