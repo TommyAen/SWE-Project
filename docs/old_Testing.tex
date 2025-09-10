@@ -1,0 +1,73 @@
+\noindent I test della classe \texttt{UserControllerTest} verificano il corretto funzionamento dei metodi di registrazione, login e cancellazione del profilo utente, comprese le situazioni di errore come credenziali non valide. I metodi \texttt{testDeleteThisProfile()} e \texttt{testDeleteProfile()} garantiscono che l'utente venga rimosso correttamente dal database e che la sessione di autenticazione venga terminata.
+
+\noindent I test della classe \texttt{TripControllerTest} coprono la creazione, modifica, ricerca e cancellazione dei viaggi, includendo casi limite come la creazione di viaggi con date passate o la cancellazione di viaggi inesistenti. Inoltre, vengono verificati i metodi di gestione dei posti disponibili e lo stato di pieno dei veicoli.
+
+\noindent I test della classe \texttt{BookingControllerTest} verificano la creazione e cancellazione delle prenotazioni, assicurando la coerenza tra Business Logic e database.
+
+\begin{lstlisting}[style=java, caption={Registrazione di un utente in UserControllerTest}]
+@Test
+void testRegister() throws SQLException {
+    userController.register(1, "John", "Doe", "john.doe@example.com", "password123", "B12345", User.UserRole.STUDENT);
+    User registeredUser = userDAO.findById(1);
+    assertNotNull(registeredUser);
+    assertEquals("John", registeredUser.getName());
+    authController.loginById(1, "password123");
+    assertTrue(authController.isLoggedIn());
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=java, caption={Creazione di un viaggio in TripControllerTest}]
+@Test
+void createTrip() {
+    Location origin = locationDAO.addLocation(new Location("Origin", "Addr1", 5));
+    Location destination = locationDAO.addLocation(new Location("Destination", "Addr2", 5));
+    Vehicle vehicle = vehicleDAO.insertVehicle(new Vehicle(4, Vehicle.VehicleState.WORKING, origin));
+    Trip trip = tripController.createTrip(vehicle.getId(), origin, destination, Date.valueOf("2025-09-07"), Time.valueOf("10:00:00"));
+    assertNotNull(trip);
+    assertEquals("Origin", trip.getOrigin().getName());
+    assertEquals("Destination", trip.getDestination().getName());
+}
+\end{lstlisting}
+
+\subsection{ORM Test} \label{subsec:orm-test}
+
+Sono stati implementati i seguenti test nelle seguenti classi:
+\begin{itemize}
+    \item \texttt{UserDAOTest}: \texttt{insertUser()}, \texttt{updateUserEmail()}, \texttt{findUserByID()}, \texttt{addLicense()}, \texttt{removeLicense()}, \texttt{removeUserByID()}.
+    \item \texttt{TripDAOTest}: \texttt{insertTrip()}, \texttt{findById()}, \texttt{updateTripDate()}.
+    \item \texttt{LocationDAOTest}: \texttt{addLocation()}, \texttt{findByName()}, \texttt{updateCapacity()}, \texttt{updateCapacityNegative()}, \texttt{removeLocation()}.
+    \item \texttt{VehicleDAOTest}: \texttt{insertVehicle()}, \texttt{findInLocation()}, \texttt{findAvailableInLocation()}, \texttt{updateStatus()}, \texttt{removeVehicle()}.
+\end{itemize}
+
+\noindent I test delle classi DAO verificano la corretta persistenza dei dati nel database, coprendo tutte le operazioni CRUD. Sono stati aggiunti anche test per casi limite, come la modifica della capacità di una location con valori negativi, o la ricerca di veicoli disponibili filtrando quelli fuori servizio. I metodi \texttt{findById()} e \texttt{updateTripDate()} della classe \texttt{TripDAOTest} garantiscono la corretta gestione degli aggiornamenti e delle ricerche nel database.
+
+\begin{lstlisting}[style=java, caption={Inserimento di un utente in UserDAOTest}]
+@Test
+void insertUser() throws SQLException {
+    userDAO.insertStudent(12345, "Mario", "Rossi", "mariorossi@prova.com", "password123");
+    User user = userDAO.findById(12345);
+    assertEquals("Mario", user.getName());
+    assertEquals("Rossi", user.getSurname());
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=java, caption={Aggiunta di una location in LocationDAOTest}]
+@Test
+void addLocation() {
+    Location location = locationDAO.addLocation(new Location("Test Location", "123 Test St", 10));
+    Location retrieved = locationDAO.findById(location.getId());
+    assertNotNull(retrieved);
+    assertEquals("Test Location", retrieved.getName());
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=java, caption={Inserimento di un veicolo in VehicleDAOTest}]
+@Test
+void insertVehicle() {
+    Vehicle v = new Vehicle(20, Vehicle.VehicleState.WORKING, location);
+    Vehicle found = vehicleDAO.insertVehicle(v);
+    assertNotNull(found);
+    assertEquals(20, found.getCapacity());
+    assertEquals(Vehicle.VehicleState.WORKING, found.getState());
+}
+\end{lstlisting}
