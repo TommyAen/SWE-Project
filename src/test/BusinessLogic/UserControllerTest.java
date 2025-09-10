@@ -78,4 +78,12 @@ class UserControllerTest {
         authController.loginById(1, "password123");
         assertTrue(authController.isLoggedIn());
     }
+
+    @Test
+    void testLoginFail() throws SQLException {
+        // Try to login with wrong credentials
+        userController.register(1, "John", "Doe", "john.doe@example.com", "password123", "B12345", User.UserRole.STUDENT);
+        authController.loginById(1, "wrongpassword");
+        assertFalse(authController.isLoggedIn());
+    }
 }

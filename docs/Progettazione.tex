@@ -1,5 +1,5 @@
 \section{Analisi dei requisiti}
-Come descritto nell'introduzione, abbiamo progettato un applicativo per la gestione e organizzazione dell'utilizzo di navette fornite dall'università per dare la possibilità a studenti di fare spostamenti tra le sedi universitarie che non sono dotate di un trasporto pubblico adatto.
+Come descritto nell'introduzione, abbiamo progettato un applicativo per la gestione e organizzazione dell'utilizzo di navette fornite dall'università per dare la possibilità a studenti di fare spostamenti tra quelle sedi universitarie che non sono dotate di un trasporto pubblico adatto.
 Abbiamo individuato come attori principali i seguenti:
 \begin{itemize}
     \item \textbf{Studente}: utente a cui è rivolto principalmente l'applicativo; 
@@ -60,7 +60,7 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
 \end{description}}
 {\begin{description}[nosep]
     \item[1.] Utente seleziona "Registrati"
-    \item[2.] Sistema mostra il form di registrazione (vedi mockup \ref{mockUp:registerMockup})
+    \item[2.] Sistema mostra il form di registrazione (vedi mockup fig. \ref{mockUp:registerMockup})
     \item[3.] L'utente inserisce i dati richiesti
     \item[4.] Conferma la registrazione
     \item[5.] Viene fatto il login automatico
@@ -80,12 +80,12 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
 {Studente}
 {Lo studente ha effettuato l’accesso all’applicazione e si trova nella schermata principale.}
 {\begin{description}[nosep]
-    \item[1.] Dalla pagina principale, lo studente sceglie l'opzione per visualizzare i viaggi disponibili (vedi mockup \ref{mockUp:viewTrips})
+    \item[1.] Dalla pagina principale, lo studente sceglie l'opzione per visualizzare i viaggi disponibili (vedi mockup fig.\ref{mockUp:viewTrips})
     \item[2.] Lo studente inserisce la sedi di partenza e arrivo, il giorno e la fascia oraria
     \item[3.] Il sistema mostra i viaggi compatibili
 \end{description}}
 {\begin{description}[nosep]
-    \item[3a.] Nessun viaggio compatibile con i criteri di ricerca → sistema mostra opzioni per creare nuovo viaggio (vedi mockup \ref{mockUp:createTrip})
+    \item[3a.] Nessun viaggio compatibile con i criteri di ricerca → sistema mostra opzioni per creare nuovo viaggio (vedi mockup fig. \ref{mockUp:createTrip})
 \end{description}}
 {L'utente visualizza la lista dei viaggi disponibili per i criteri scelti} 
 % Use Case 3
@@ -146,7 +146,7 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
     \item[5.] L'utente viene eliminato dal sistema
 \end{description}}
 {\begin{description}[nosep]
-    \item[3a.] L’utente ha prenotazioni future → sistema richiede conferma aggiuntiva
+    \item[3a.] L’utente ha prenotazioni future o è assegnato come guidatore in un viaggio → sistema richiede conferma aggiuntiva
 \end{description}}
 {L’utente è rimosso dal sistema, incluse eventuali prenotazioni}
 \label{uc:uc5}
@@ -172,7 +172,7 @@ Di seguito sono riportati gli use case template per i principali casi d'uso del 
 {La navetta è disponibile per l’assegnazione ai gruppi}
 \label{uc:uc6}
 \subsection{Page Navigation Diagram}\label{subsec:PageNavigation}
-Nel seguente diagramma sono riportate le possibili azioni che un utente può compiere, mostrando i modi con il quale si può navigare tra le pagine
+Nel seguente diagramma sono riportate le possibili azioni che un utente può compiere, mostrando i modi con il quale si può navigare tra le pagine.
 \begin{figure}[H]
     \centering
     \includegraphics[width = 1.25\linewidth]{Images/PageNavigation_diag.png}
@@ -180,7 +180,7 @@ Nel seguente diagramma sono riportate le possibili azioni che un utente può com
     \label{fig:PageNavdiag}
 \end{figure}
 \subsection{Mockup}
-Di seguito mostriamo alcune rappresentazioni grafiche di una possibile implementazione dell'interfaccia utente del sistema. Queste immagini sono state realizzate tramite Figma, un'applicazione utilizzata nella modellazione di interfacce grafiche. La scelta della visualizzazione proposta per dispositivi mobili è motivata dal fatto che gli utenti molto probabilmente accederanno e usufruiranno del servizio tramite il proprio smartphone.
+Di seguito presentiamo alcune rappresentazioni grafiche di una possibile implementazione dell'interfaccia utente del sistema. Le immagini sono state realizzate con Figma, uno strumento dedicato alla progettazione di interfacce grafiche. La scelta di proporre mockup per dispositivi mobili è motivata dall'ipotesi che la maggior parte degli utenti accederà al servizio tramite smartphone.
 \begin{figure}[H]
     \centering
     \begin{minipage}{0.45\textwidth}
@@ -218,6 +218,14 @@ Di seguito mostriamo alcune rappresentazioni grafiche di una possibile implement
 
 \section{Class Diagram}
 Vista la progettazione a tre livelli, di seguito sono riportati i diagrammi delle classi per ciascuno dei modelli.
+Nella figura \ref{fig:pkdep} è possibile osservare le dipendenze tra i vari package del sistema.
+\end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Images/PkgDeps.png}
+    \caption{Package Dependency Diagram}
+    \label{fig:pkdep}
+\end{figure}
 \subsection{Domain Model}\label{subsec:DM}
 Il Domain Model ha il compito di definire le entità concettuali fondamentali del dominio dell'applicazione; le sue classi rappresentano i concetti del "\textit{mondo reale}", infatti le istanze saranno utilizzate negli altri layer dell'applicazione per eseguire elaborazioni sui dati senza richiedere un accesso diretto al database; solitamente sono implementate come \textit{POJO} (\textit{Plain Old Java Object}), non implementando nessun tipo di metodi oltre a getters e setters.
 Le entità principali che abbiamo individuato sono le seguenti:
@@ -243,12 +251,13 @@ Di seguito viene riportato il diagramma delle classi
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{Images/ORM_diag.png}
-    \caption{ORM class daig}
+    \caption{ORM class diagram}
     \label{fig:ORMdiag}
 \end{figure}
 \subsection{Business Logic}\label{subsec:BL}
 La Business Logic rappresenta la parte logica/operativa dell'applicazione; in questa vengono definite e implementate le regole di business e le operazioni di controllo, coordinando tutte le possibili operazioni.\\
 Questo strato fa quindi uso dei DAO per l'accesso ai dati persistenti e delle classi del Domain Model per l'elaborazione delle informazioni dei calcoli.
+Ad ogni entità del Domain Model corrisponde un controller che ha il compito di gestire le operazioni principali che possono essere eseguite su quella entità; in più è presenta una classe chiamata AuthController che si occupa della gestione dell'autenticazione e del controllo dei permessi degli utenti.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{Images/BusinessLogic_diag.png}

@@ -1,11 +1,11 @@
 \section{Testing}
 
-Per verificare il corretto funzionamento del progettoI test sono stati suddivisi in due categorie principali:
+Per verificare il corretto funzionamento del progetto abbiamo suddiviso i test due categorie principali:
 \begin{itemize}
-    \item Test di Business Logic: Verificano il corretto funzionamento dei controller che gestiscono la logica di business del sistema.
     \item Test ORM: Verificano la corretta persistenza dei dati nel database attraverso le classi DAO.
+    \item Test di Business Logic: Verificano il corretto funzionamento dei controller che gestiscono la logica di business del sistema.
 \end{itemize}
-Abbiamo deciso di non fare test su Domain Model in quanto contiene classi che contengono solo attributi e metodi getter-setter, senza logica complessa da testare, e non presentano dipendenze esterne.\\
+Abbiamo deciso di non fare test su Domain Model in quanto contiene classi composte esclusivamente attributi e metodi getter-setter, senza logica complessa da testare, e non presentano dipendenze esterne.\\
 I test sono stati sviluppati con JUnit 5, e ciascuna classe di test si occupa di ripulire i dati inseriti nel database al termine dell'esecuzione, garantendo così l'indipendenza tra i test.\\
 Negli unit test è stato usato il pattern di \textit{Dependency Injection} per iniettare le dipendenze necessarie alle classi da testare, facilitando così l'isolamento delle unità di codice.\\
 \begin{lstlisting}[style=java, caption={Esempio di Dependency Injection in UserControllerTest}]
@@ -14,7 +14,7 @@ void setUp() {
     userDAO = new UserDAO();
     authController = new AuthController(userDAO);
     userController = new UserController(userDAO, authController);
-    // creazione di un oggetto User per i test
+    // ... creazione di un oggetto User per i test ...
 }
 @Test
 void testRegister() throws SQLException {
@@ -36,6 +36,113 @@ Per ogni caso d'uso descritto nella sezione \ref{subsec:usecaseTemplate} sono st
     \item \texttt{testDeleteUser} → UC-5
     \item \texttt{testAddVehicle} → UC-6
 \end{itemize}
-\subsection{Elenco dei unit test implementati}
+\subsection{Elenco unit test implementati}
+\paragraph{Test ORM}
+Di seguito sono elencati i principali test implementati per verificare il corretto funzionamento delle classi DAO:
+\begin{itemize}
+    \item \texttt{UserDAOTest}: 
+    \begin{itemize}
+        \item \texttt{testInsertUser()}
+        \item \texttt{testUpdateUserEmail()} 
+        \item \texttt{testFindUserByID()}
+        \item \texttt{testAddLicense()}
+        \item \texttt{testRemoveLicense()}
+        \item \texttt{testRemoveUserByID()}.
+    \end{itemize}
+    
+    
+    \item \texttt{TripDAOTest}: 
+    \begin{itemize}
+        \item \texttt{testInsertTrip()}
+        \item \texttt{testFindById()}
+        \item \texttt{testUpdateTripDate()}.
+    \end{itemize}
+    
+    
+    \item \texttt{LocationDAOTest}: 
+    \begin{itemize}
+        \item \texttt{testAddLocation()}
+        \item \texttt{testFindByName()}
+        \item \texttt{testUpdateCapacity()}
+        \item \texttt{testUpdateCapacityNegative()}
+        \item \texttt{testRemoveLocation()}
+    \end{itemize}
+    
+    \item \texttt{VehicleDAOTest}: 
+    \begin{itemize}
+        \item \texttt{testInsertVehicle()}
+        \item \texttt{testFindInLocation()}
+        \item \texttt{testFindAvailableInLocation()}
+        \item \texttt{testUpdateStatus()}
+        \item \texttt{testRemoveVehicle()}
+    \end{itemize}
+\end{itemize}
 
-
+\paragraph{Business Logic Test} \label{subsec:business-logic-test}
+Per rendere indipendenti i test di Business Logic dai DAO, è stato usato il mocking tramite \texttt{Mockito}, che simulano il comportamento di funzionalità delle classi reali, restituendo dati predefiniti.\\
+\begin{lstlisting}[style=java, caption={Esempio uso di mocking  in BookingControllerTest.}, label={lst:bookDAOmocking}]
+    @Mock
+    private BookingDAO bookingDAO;
+    @Mock
+    private TripDAO tripDAO;
+    @Mock
+    private AuthController authController;
+    @Mock
+    private TripController tripController;
+    @InjectMocks
+    private BookingController bookingController;
+    
+    private Trip testTrip;
+    void setup() {
+    // .. Setup di un qualche oggetto trip per i test ..
+        testTrip = //...
+    }
+    
+    void testBookTripFull() throws SQLException {
+        when(tripController.isFull(testTrip)).thenReturn(true); //simula che viaggio sia pieno
+        
+        Booking newBooking = bookingController.createBooking(testTrip.getId());
+        
+        verify(bookingDAO, never()).insertBooking(any()); //verifica che insertBooking non venga mai chiamato
+        assertNull(newBooking); //verifica che il risultato sia null
+    }
+\end{lstlisting}
+Come si può vedere nel listato \ref{lst:bookDAOmocking}, l'annotazione \texttt{@Mock} viene utilizzata per creare oggetti mock delle classi DAO e del controller di autenticazione, creando automaticamente degli oggetti \texttt{mock} per quei tipi, mentre \texttt{@InjectMocks} viene usata per iniettare questi mock nel controller che si vuole testare, in questo caso \texttt{BookingController}.\\
+Di seguito sono elencati i principali test implementati per verificare il corretto funzionamento dei controller:
+\begin{itemize}
+    \item \texttt{UserControllerTest}:
+    \begin{itemize}
+        \item \texttt{registerStudent()}
+        \item \texttt{testDeleteThisProfile()}
+        \item \texttt{testDeleteProfile()}
+        \item \texttt{testLogin()}
+        \item \texttt{testLoginFail()}.
+    \end{itemize}
+    \item \texttt{TripControllerTest}: 
+    \begin{itemize}
+        \item \texttt{testCreateTrip()}
+        \item \texttt{testFindById()}
+        \item \texttt{testModifyTrip()}
+        \item \texttt{testCancelTrip()}
+    \end{itemize}
+    \item \texttt{BookingControllerTest}
+    \begin{itemize}
+        \item \texttt{testBookAndCancel()}
+        \item \texttt{testBookFullTrip()}
+    \end{itemize} 
+    \item \texttt{LocationControllerTest}
+    \begin{itemize}
+        \item \texttt{testAddLocation()}
+        \item \texttt{testAddLocationNotAdmin()}
+        \item \texttt{testFindById()}
+        \item \texttt{testUpdateCapacity()}
+    \end{itemize}
+    \item \texttt{VehicleControllerTest}
+    \begin{itemize}
+        \item \texttt{testAddVehicle()}
+        \item \texttt{testAddVehicleNotAdmin()}
+        \item \texttt{testFindById()}
+        \item \texttt{testModifyStatus()}
+        \item \texttt{testListAvailableVehiclesForLocation()}
+    \end{itemize}
+\end{itemize}

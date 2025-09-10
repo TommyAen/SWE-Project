@@ -12,7 +12,7 @@ La struttura delle directory del progetto è stata organizzata in modo da separa
 
 \subsection{Implementazione Database}\label{subsec:DBimpl}
 Di seguito viene mostrata l'implementazione del database PostgreSQL, che segue la struttura descritta in sez \ref{subsec:DB}.
-Da notare è la scelta di come vengono generate i valori per i campi \texttt{id} di ogni classe: abbiamo pensato infatti che gli utenti avranno sicuramente una matricola, e quindi dovrà essere lo stesso utente ad inserirla, ma per tutte le altre classi quel campo viene generato automaticamente. In questo modo le operazioni di inserimento diventano più semplici; questo è stato possibile grazie al costrutto \texttt{id INTEGER GENERATED ALWAYS AS IDENTITY}, che genera automaticamente un valore intero tranne quando è fornito.\\
+Da notare è la scelta di come vengono generate i valori per i campi \texttt{id} di ogni classe: abbiamo pensato infatti che gli utenti avranno sicuramente una matricola, e quindi dovrà essere lo stesso utente ad inserirla, ma per tutte le altre classi quel campo viene generato automaticamente nel caso in cui non venga fornito, grazie al costrutto \texttt{id INTEGER GENERATED ALWAYS AS IDENTITY}.\\
 Sono stati aggiunti alcuni vincoli per evitare anche a livello di database l'inserimento di valori non validi.
 
 \begin{lstlisting}[style=sql, caption={Esempio creazione tabelle User e Trip}]
@@ -44,11 +44,11 @@ CREATE TABLE Trip (
 );
 \end{lstlisting}
 \subsubsection{Dati di Default}
-Il sistema include uno script \texttt{default-unifi} che popola il database con le sedi reali dell'Università di Firenze:
+Il sistema include uno script \texttt{default-unifi} che popola il database con le sedi reali dell'Università di Firenze, alcuni veicoli, studenti e trip, ed un admin di default.
 \begin{lstlisting}[style=sql, caption={Esempio inserimento dati di default per le location}]
 INSERT INTO Location (name, address) VALUES
 ('Rettorato - UNIFI', 'Piazza San Marco, 4, 50121 Firenze FI'),
-('Facolt@ di Ingegneria', 'Via Santa Marta, 3, 50139 Firenze FI'),
+('Facolta di Ingegneria', 'Via Santa Marta, 3, 50139 Firenze FI'),
  ('Centro Didattico Morgagni', 'Viale Morgagni, 65, 50134 Firenze FI'),
 \end{lstlisting}
 \begin{lstlisting}[style=sql, caption={Esempio inserimento dati di default per le location}]
@@ -94,7 +94,8 @@ public enum UserRole {
 
 \subsubsection{Vehicle e Location}
 \texttt{Vehicle} rappresenta le navette rese disponibili dall'università con attributi \texttt{int capacity, VehicleStase state, Location location}. \texttt{Location} modella le sedi universitarie con nome, indirizzo e numero di parcheggi per le navette che ci sono.
-Ogni veicolo è associato alla \texttt{Location} nella quale si trova grazie all'attributo \texttt{location}, e lo stato indica se è funzionante, non funzionante o in riparazione.
+Ogni veicolo è associato alla \texttt{Location} nella quale si trova grazie all'attributo \texttt{location}, e lo stato indica se è funzionante, non funzionante o in riparazione.\\
+\texttt{Location} contiene anche un attributo \texttt{int availableParkingSpots} che indica quanti posti liberi ci sono per parcheggiare le navette in quella sede, e poi attributi \texttt{name} e \texttt{address}, ed un intero texttt{capacity} che indica quanti veicoli in totale possono essere parcheggiati in quella sede.
 \subsubsection{Trip}
 La classe \texttt{Trip} modella i viaggi creati dagli utenti con patente. Contiene informazioni su:
 \begin{itemize}
@@ -104,15 +105,15 @@ La classe \texttt{Trip} modella i viaggi creati dagli utenti con patente. Contie
 \item Stato del viaggio (SCHEDULED, ONGOING, COMPLETED, CANCELED)
 \end{itemize}
 Per la data e l'ora abbiamo scelto rispettivamente \texttt{java.sql.Date} e \texttt{java.sql.Time} che ci ha permesso poi nei DAO di non aver problemi.
-La classe \texttt{Trip} rappresenta la classe più importante dopo \texttt{User} perché lega tutti i vari concetti insieme.
+La classe \texttt{Trip} rappresenta la classe più importante dopo \texttt{User} perché lega tutti i vari concetti insieme e rappresenta il centro del sistema di car sharing.
 \subsubsection{Booking}
-La classe \texttt{Booking} gestisce le prenotazioni degli studenti per i viaggi disponibili; ad ogni oggetto booking viene associato:
+La classe \texttt{Booking} rappresenta le prenotazioni degli studenti per i viaggi disponibili; ad ogni oggetto booking viene associato:
 \begin{itemize}
     \item \texttt{User user}: utente a cui è associata la prenotazione
     \item \texttt{Trip trip}: viaggio a cui è associata la prenotazione
     \item \texttt{BookingState state}: lo stato della prenotazione
 \end{itemize}
-è stato deciso di non mettere data e orario del viaggio a cui è associata la prenotazione perché sono informazioni che si possono estrarre dall'attributo \texttt{trip} essendo un \texttt{Trip}.
+è stato deciso di non mettere data e orario del viaggio a cui è associata la prenotazione perché sono informazioni che si possono estrarre dall'attributo \texttt{trip}.
 
 \subsection{Object-Relational Mapping}
 Nel package \texttt{main.ORM} sono implementate le classi DAO che gestiscono la persistenza dei dati e l'interazione con il database PostgreSQL.
@@ -135,7 +136,7 @@ public static Connection getConnection() throws SQLException {
     return connection;
 }
 \end{lstlisting}
-Come si nota dalla definizione, questa classe implementa il pattern \textit{Singleton}, garantendo che esista una sola istanza condivisa di \texttt{ConnectionManager} in tutta l'applicazione. In questo modo, tutti i DAO utilizzano la stessa connessione al database, semplificando la gestione delle risorse e riducendo il rischio di apertura simultanea di troppe connessioni. Il costruttore privato impedisce la creazione di istanze multiple, mentre il metodo statico \texttt{getInstance()} fornisce l'accesso globale all'unica istanza disponibile.
+Come si nota dalla definizione, questa classe implementa il pattern \textit{Singleton}, garantendo che esista una sola istanza condivisa di \texttt{ConnectionManager} in tutta l'applicazione. In questo modo tutti i DAO utilizzano la stessa connessione al database, semplificando la gestione delle risorse e riducendo il rischio di apertura simultanea di troppe connessioni. Il costruttore privato impedisce la creazione di istanze multiple, mentre il metodo statico \texttt{getInstance()} fornisce l'accesso globale all'unica istanza disponibile.
 \paragraph{DAO} Per creare le connesioni nei DAO abbiamo deciso di usare il costrutto di java \textit{try-with-resources} perché garantisce la chiusura sicura dello statment anche in caso di eccezione, senza necessità di dover scrivere un blocco \texttt{finally} dove si chiude.
 \begin{lstlisting}[style=java, caption={Esempio di uso di try-with-resources per la connessione nel metodo insertUser di UserDAO}]
 String insertSQL = "INSERT INTO \"User\" (id, name, surname, email, password, role, license) VALUES (?, ?, ?, ?,?, ?, ?)";
@@ -145,7 +146,9 @@ try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL
 }
 \end{lstlisting}
 \subsubsection{UserDAO}
-Implementa le operazioni CRUD per l'entità User, con metodi specializzati per la gestione delle patenti. Il DAO implementa anche metodi per il recupero filtrato di utenti (tutti gli studenti, tutti gli admin, studenti con/senza patente) per supportare le funzionalità amministrative; abbiamo deciso di implementare tramite un metodo privato delle query che creano liste di user a seconda di qualsiasi quey, nel quale si può specificare solamente la query da applicare; questa tecnica è stata usata anche negli altri DAO per evitare duplicazione di codice.
+La classe UserDAO si occupa della gestione della persistenza per l'entità User, implementando tutte le operazioni CRUD (Create, Read, Update, Delete). Oltre ai metodi di base, sono presenti metodi specifici per la gestione della patente di guida degli utenti, come l'aggiunta o la rimozione della patente.
+
+Per supportare le funzionalità amministrative, UserDAO offre metodi per il recupero filtrato degli utenti, ad esempio per ottenere tutti gli studenti, tutti gli amministratori, oppure solo gli studenti che possiedono o meno una patente. Per evitare duplicazione di codice, è stato adottato un approccio che prevede un metodo privato che esegue una query parametrica e popola una lista di oggetti User in base ai criteri specificati. Questo pattern è stato riutilizzato anche negli altri DAO, garantendo maggiore riusabilità e manutenibilità del codice.
 \begin{lstlisting}[style=java, caption={Metodo per ottenere tutti gli User che soddisfano alcuni criteri}]
 private void getUsersFromQuery(String selectSQL, List<User> userList) { //...
 }
@@ -158,12 +161,13 @@ public List<User> getAllStudents() throws SQLException {
     }
 \end{lstlisting}
 \subsubsection{TripDAO}
-Gestisce la persistenza dei viaggi con supporto per query complesse.
+La classe TripDAO implementa tutte le operazioni CRUD per l'entità Trip, consentendo la creazione, modifica, cancellazione e recupero dei viaggi dal database. Oltre alle operazioni di base offre metodi per la ricerca e il filtraggio dei viaggi, come la possibilità di ottenere tutti i viaggi programmati in una certa data, quelli associati a un determinato utente (come conducente o passeggero), o i viaggi disponibili in base allo stato e alla disponibilità di posti.
 \subsubsection{BookingDAO}
-Implementa la gestione delle prenotazioni con supporto per aggregazioni:
-Il metodo supporta il calcolo dei posti disponibili nei viaggi, fondamentale per la logica di business del sistema.
+Implementa la gestione delle prenotazioni con supporto per nel database, offrendo anche una funzionalità per recuperare tutte le prenotazioni associate a un determinato utente o viaggio, oppure per il calcolo dei posti disponibili nei viaggi.
 \subsubsection{VehicleDAO e LocationDAO}
-Gestiscono rispettivamente la persistenza dei veicoli e delle sedi universitarie. 
+\paragraph{VehicleDAO} Oltre alle operazioni standard, questa classe offre metodi per recuperare tutti i veicoli disponibili in una determinata sede e verificare la disponibilità di veicoli per un determinato viaggio. Inoltre offre metodi per aggiornare la posizione del veicolo quando viene spostato tra sedi diverse.
+
+\paragraph{LocationDAO} Questa classe permette di gestire le sedi universitarie, consentendo l'inserimento di nuove location, la modifica delle informazioni (nome, indirizzo, numero di parcheggi disponibili) e la rimozione di sedi non più utilizzate.
 \subsection{Business Logic}
 Nel package \texttt{main.BusinessLogic} sono implementati i controller che gestiscono la logica di business del sistema per ogni servizio.
 \subsubsection{AuthController}
@@ -173,7 +177,7 @@ Grazie a questo durante la sessione è possibile verificare i permessi dell'uten
 Ha il compito di gestione dei viaggi proponendo metodi come \texttt{createTrip, modifyTrip, isFull}. 
 Il metodo \texttt{createTrip} implementa una serie di controlli di validazione prima di creare il viaggio, verificando autenticazione, disponibilità del veicolo e possesso della patente.
 \subsubsection{BookingController}
-Questa classe ha lo scopo di permettere agli utenti di creare prenotazioni (\texttt{createBooking}), modificarle (\texttt{modifyBooking}) o cancellarle con \texttt{cancelBooking}. Per la cancellazione abbiamo deciso che inizialmente le prenotazioni rimangano salvate nel database ma viene modificato lo stato; sarà poi l'admin a decidere se rimuoverle completamente con \texttt{removeBooking}
+Questa classe ha lo scopo di permettere agli utenti di creare prenotazioni (\texttt{createBooking}), modificarle (\texttt{modifyBooking}) o cancellarle con \texttt{cancelBooking}. Per la cancellazione abbiamo deciso che inizialmente le prenotazioni rimangono salvate nel database modificando però modificato lo stato; sarà poi l'admin a decidere se rimuoverle completamente con \texttt{removeBooking}
 \begin{lstlisting}[style=Java, caption={Cancellazione e rimozione di una Prenotazione}]
     public boolean cancelBooking(int bookingId) {
         try {
@@ -206,6 +210,5 @@ Ogni metodo amministrativo implementa controlli di autorizzazione per garantire 
 \subsubsection{VehicleController e LocationController}
 Queste due classi implementano la logica per le operazioni di gestione dei veicoli e delle sedi.
 
-\subsection{Interfaccia CLI}
-Un semplice esempio di interfaccia a linea di comando (CLI) è stata implementata nel file \texttt{src.Main} e fornisce un modo intuitivo per interagire con il sistema. La CLI guida l'utente attraverso una serie di pagine, consentendo di eseguire le operazioni principali del sistema come descritto in sez \ref{subsec:PageNavigation}.\\
-
+\paragraph{Application Manager}
+Questa classe ha il compito di inizializzare e collegare tutti i controller tra loro, in modo che possano collaborare per eseguire le operazioni richieste dagli utenti.

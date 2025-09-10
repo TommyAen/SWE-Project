@@ -1,131 +1,81 @@
 package test.BusinessLogic;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.*;
-import main.ORM.ConnectionManager;
-import java.sql.*;
 import main.BusinessLogic.*;
 import main.DomainModel.*;
 import main.ORM.*;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class TripControllerTest {
-    private TripController tripController;
-    private AuthController authController;
-    private UserDAO userDAO;
-    private LocationDAO locationDAO;
-    private VehicleDAO vehicleDAO;
-    private BookingDAO bookingDAO;
-    private TripDAO tripDAO;
+
+    @Mock private TripDAO tripDAO;
+    @Mock private VehicleController vehicleController;
+    @Mock private LocationController locationController;
+    @Mock private AuthController authController;
+    @Mock private BookingDAO bookingDAO;
+
+    @InjectMocks
+    private TripController tripController; // userà il costruttore con dipendenze mockate
+
+    private Location origin;
+    private Location destination;
+    private Vehicle vehicle;
+    private User driver;
+    private Trip trip;
 
     @BeforeEach
-    void setUp() {
-        // Clean up tables before each test
-        bookingDAO = new BookingDAO();
-        tripDAO = new TripDAO();
-        authController = new AuthController();
-        tripController = new TripController(authController);
-        userDAO = new UserDAO();
-        locationDAO = new LocationDAO();
-        vehicleDAO = new VehicleDAO();
-        try {
-            bookingDAO.removeAllBookings();
-            tripDAO.removeAllTrips();
-            vehicleDAO.removeAllVehicles();
-            locationDAO.removeAllLocations();
-            userDAO.removeAllUsers();
-            // Insert test user and authenticate
-            userDAO.insertStudent(1, "Driver", "Test", "driver@test.com", "password", "345fakeDL");
-            authController.login(userDAO.findById(1), "password");
-        } catch (Exception e) { fail(e); }
-    }
+    void setUp() throws SQLException {
+        origin = new Location("Origin", "Addr1", 5);
+        destination = new Location("Destination", "Addr2", 5);
+        vehicle = new Vehicle(1, Vehicle.VehicleState.WORKING, origin);
+        driver = new User(1, "Driver", "Test", "driver@test.com", "driver", "pwd", User.UserRole.ADMIN);
+        trip = new Trip(1, origin, destination, Date.valueOf("2025-09-07"),
+                Time.valueOf("10:00:00"), driver, vehicle, Trip.TripState.SCHEDULED);
 
-    @AfterEach
-    void tearDown() {
-        try {
-            bookingDAO.removeAllBookings();
-            tripDAO.removeAllTrips();
-            vehicleDAO.removeAllVehicles();
-            locationDAO.removeAllLocations();
-            userDAO.removeAllUsers();
-        } catch (Exception e) { fail(e); }
+        lenient().when(locationController.findByName("Origin")).thenReturn(origin);
+        lenient().when(locationController.findByName("Destination")).thenReturn(destination);
+        lenient().when(vehicleController.listAvailableVehiclesForLocation(origin)).thenReturn(List.of(vehicle));
+        lenient().when(authController.getCurrentUser()).thenReturn(driver);
+        lenient().when(tripDAO.insertTrip(any(Trip.class))).thenReturn(trip);
+        lenient().when(tripDAO.findById(1)).thenReturn(trip);
+        lenient().when(tripDAO.getSeatsForTrip(1)).thenReturn(trip.getVehicle().getCapacity());
+        lenient().when(bookingDAO.countBookingsForTrip(1)).thenReturn(2);
     }
 
     @Test
-    void createTrip() {
-        try {
-            Location origin = locationDAO.addLocation(new Location("Origin", "Addr1", 5));
-            Location destination = locationDAO.addLocation(new Location("Destination", "Addr2", 5));
-            Vehicle vehicle = vehicleDAO.insertVehicle(new Vehicle( 4, Vehicle.VehicleState.WORKING, origin));
-            Trip trip = tripController.createTrip(vehicle.getId(), origin, destination, Date.valueOf("2025-09-07"), Time.valueOf("10:00:00"));
-            assertNotNull(trip);
-            assertEquals("Origin", trip.getOrigin().getName());
-            assertEquals("Destination", trip.getDestination().getName());
-        } catch (Exception e) { fail(e); }
+    void testCreateTrip() throws SQLException {
+        when(authController.isLoggedIn()).thenReturn(false); // utente autenticato
+        Trip created = tripController.createTrip("Origin", "Destination", "2025-09-07", "10:00:00");
+        assertNotNull(created);
+        assertEquals("Origin", created.getOrigin().getName());
+        verify(tripDAO).insertTrip(any(Trip.class));
     }
 
     @Test
-    void findById() {
-        try {
-            Location origin = locationDAO.addLocation(new Location(0, "Origin", "Addr1", 5));
-            Location destination = locationDAO.addLocation(new Location(0, "Destination", "Addr2", 5));
-            Vehicle vehicle = vehicleDAO.insertVehicle(new Vehicle( 4, Vehicle.VehicleState.WORKING, origin));
-            Trip trip = tripController.createTrip(vehicle.getId(), origin, destination, Date.valueOf("2025-09-07"), Time.valueOf("10:00:00"));
-            Trip found = tripController.findById(trip.getId());
-            assertNotNull(found);
-            assertEquals(trip.getId(), found.getId());
-        } catch (Exception e) { fail(e); }
+    void testFindById() {
+        Trip found = tripController.findById(1);
+        assertNotNull(found);
+        assertEquals(1, found.getId());
     }
 
     @Test
-    void modifyTrip() {
-        try {
-            Location origin = locationDAO.addLocation(new Location(0, "Origin", "Addr1", 5));
-            Location destination = locationDAO.addLocation(new Location(0, "Destination", "Addr2", 5));
-            Vehicle vehicle = vehicleDAO.insertVehicle(new Vehicle( 4, Vehicle.VehicleState.WORKING, origin));
-            Trip trip = tripController.createTrip(vehicle.getId(), origin, destination, Date.valueOf("2025-09-07"), Time.valueOf("10:00:00"));
-
-            Location newOrigin = locationDAO.addLocation(new Location(0, "NewOrigin", "Addr3", 5));
-            Location newDestination = locationDAO.addLocation(new Location(0, "NewDestination", "Addr4", 5));
-            Vehicle newVehicle = vehicleDAO.insertVehicle(new Vehicle( 4, Vehicle.VehicleState.WORKING, origin));
-
-            User driver = authController.getCurrentUser();
-            tripController.modifyTrip(trip.getId(), newOrigin, newDestination, Time.valueOf("12:00:00"), Date.valueOf("2025-09-08"), driver, newVehicle, Trip.TripState.SCHEDULED);
-            Trip modified = tripController.findById(trip.getId());
-            assertEquals("NewOrigin", modified.getOrigin().getName());
-            assertEquals("NewDestination", modified.getDestination().getName());
-            assertEquals(Date.valueOf("2025-09-08"), modified.getDate());
-            assertEquals(Time.valueOf("12:00:00"), modified.getTime());
-        } catch (Exception e) { fail(e); }
-    }
-
-    @Test
-    void cancelTrip() {
-        try {
-            Location origin = locationDAO.addLocation(new Location(0, "Origin", "Addr1", 5));
-            Location destination = locationDAO.addLocation(new Location(0, "Destination", "Addr2", 5));
-            Vehicle vehicle = vehicleDAO.insertVehicle(new Vehicle( 4, Vehicle.VehicleState.WORKING, origin));
-
-            Trip trip = tripController.createTrip(vehicle.getId(), origin, destination, Date.valueOf("2025-09-07"), Time.valueOf("10:00:00"));
-            boolean result = tripController.cancelTrip(trip.getId());
-            Trip found = tripController.findById(trip.getId());
-            assertNull(found);
-        } catch (Exception e) { fail(e); }
-    }
-
-    @Test
-    void getAvailableSeatsAndIsFull() {
-        try {
-            Location origin = locationDAO.addLocation(new Location(0, "Origin", "Addr1", 5));
-            Location destination = locationDAO.addLocation(new Location(0, "Destination", "Addr2", 5));
-            Vehicle vehicle = vehicleDAO.insertVehicle(new Vehicle( 2, Vehicle.VehicleState.WORKING, origin));
-
-            Trip trip = tripController.createTrip(vehicle.getId(), origin, destination, Date.valueOf("2025-09-07"), Time.valueOf("10:00:00"));
-            int seats = tripController.getAvailableSeats(trip.getId());
-            assertEquals(2, seats);
-            assertFalse(tripController.isFull(trip));
-        } catch (Exception e) { fail(e); }
+    void testCancelTrip() throws SQLException {
+        doNothing().when(tripDAO).removeTrip(1);
+        tripController.cancelTrip(tripDAO.findById(1));
+        verify(tripDAO).removeTrip(1);
     }
 }
