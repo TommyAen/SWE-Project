@@ -1,12 +1,12 @@
 \section{Testing}
 
-Per verificare il corretto funzionamento del progetto abbiamo suddiviso i test due categorie principali:
+Per verificare il corretto funzionamento del progetto abbiamo deciso di implementare due tipi di test:
 \begin{itemize}
     \item Test ORM: Verificano la corretta persistenza dei dati nel database attraverso le classi DAO.
     \item Test di Business Logic: Verificano il corretto funzionamento dei controller che gestiscono la logica di business del sistema.
 \end{itemize}
 Abbiamo deciso di non fare test su Domain Model in quanto contiene classi composte esclusivamente attributi e metodi getter-setter, senza logica complessa da testare, e non presentano dipendenze esterne.\\
-I test sono stati sviluppati con JUnit 5, e ciascuna classe di test si occupa di ripulire i dati inseriti nel database al termine dell'esecuzione, garantendo così l'indipendenza tra i test.\\
+I test sono stati sviluppati con l'utilizzo di JUnit 5, un framework di testing per Java, e Mockito, una libreria per il mocking delle dipendenze.\\
 Negli unit test è stato usato il pattern di \textit{Dependency Injection} per iniettare le dipendenze necessarie alle classi da testare, facilitando così l'isolamento delle unità di codice.\\
 \begin{lstlisting}[style=java, caption={Esempio di Dependency Injection in UserControllerTest}]
 @BeforeEach
@@ -27,7 +27,7 @@ void testRegister() throws SQLException {
 }
 \end{lstlisting}
 \subsection{Test riguardanti casi d'uso}
-Per ogni caso d'uso descritto nella sezione \ref{subsec:usecaseTemplate} sono stati implementati test specifici per verificare il corretto funzionamento delle funzionalità principali del sistema: di sotto viene riportato il mapping tra i test fatti e la descrizione dei casi d'uso.
+Per ogni caso d'uso descritto nella sezione \ref{subsec:usecaseTemplate} sono stati implementati test specifici per verificare il corretto funzionamento delle funzionalità principali del sistema: di seguito viene riportato il mapping tra i test fatti e la descrizione dei casi d'uso.
 \begin{itemize}
     \item \texttt{testRegister} → UC-1
     \item \texttt{testViewAvailableTrips} → UC-2
@@ -79,7 +79,7 @@ Di seguito sono elencati i principali test implementati per verificare il corret
 \end{itemize}
 
 \paragraph{Business Logic Test} \label{subsec:business-logic-test}
-Per rendere indipendenti i test di Business Logic dai DAO, è stato usato il mocking tramite \texttt{Mockito}, che simulano il comportamento di funzionalità delle classi reali, restituendo dati predefiniti.\\
+Per rendere indipendenti i test di Business Logic dai DAO, è stato usato il mocking simulando il comportamento di funzionalità delle classi reali e restituendo dati predefiniti.\\
 \begin{lstlisting}[style=java, caption={Esempio uso di mocking  in BookingControllerTest.}, label={lst:bookDAOmocking}]
     @Mock
     private BookingDAO bookingDAO;
@@ -107,7 +107,7 @@ Per rendere indipendenti i test di Business Logic dai DAO, è stato usato il moc
         assertNull(newBooking); //verifica che il risultato sia null
     }
 \end{lstlisting}
-Come si può vedere nel listato \ref{lst:bookDAOmocking}, l'annotazione \texttt{@Mock} viene utilizzata per creare oggetti mock delle classi DAO e del controller di autenticazione, creando automaticamente degli oggetti \texttt{mock} per quei tipi, mentre \texttt{@InjectMocks} viene usata per iniettare questi mock nel controller che si vuole testare, in questo caso \texttt{BookingController}.\\
+Come si può vedere nel listato \ref{lst:bookDAOmocking}, l'annotazione \texttt{@Mock} viene utilizzata per creare automaticamente oggetti mock delle classi DAO e del controller di autenticazione, mentre \texttt{@InjectMocks} viene usata per iniettare i mock nel controller che si vuole testare, in questo caso \texttt{BookingController}.\\
 Di seguito sono elencati i principali test implementati per verificare il corretto funzionamento dei controller:
 \begin{itemize}
     \item \texttt{UserControllerTest}:

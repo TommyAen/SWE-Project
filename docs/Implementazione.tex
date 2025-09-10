@@ -11,7 +11,7 @@ La struttura delle directory del progetto è stata organizzata in modo da separa
 \end{itemize}
 
 \subsection{Implementazione Database}\label{subsec:DBimpl}
-Di seguito viene mostrata l'implementazione del database PostgreSQL, che segue la struttura descritta in sez \ref{subsec:DB}.
+Per il database abbiamo scelto di usare PostgreSQL, e la struttura segue quella descritta in sez \ref{subsec:DB}.
 Da notare è la scelta di come vengono generate i valori per i campi \texttt{id} di ogni classe: abbiamo pensato infatti che gli utenti avranno sicuramente una matricola, e quindi dovrà essere lo stesso utente ad inserirla, ma per tutte le altre classi quel campo viene generato automaticamente nel caso in cui non venga fornito, grazie al costrutto \texttt{id INTEGER GENERATED ALWAYS AS IDENTITY}.\\
 Sono stati aggiunti alcuni vincoli per evitare anche a livello di database l'inserimento di valori non validi.
 
@@ -59,10 +59,10 @@ INSERT INTO Location (name, address) VALUES
 \end{lstlisting}
 
 \subsection{Domain Model}
-Nel package \texttt{main.DomainModel} sono implementate le classi che rappresentano le entità del dominio applicativo del sistema di car sharing universitario e  l'implementazione segue la descrizione fornita in sez \ref{subsec:DM}. Ogni classe, implementa tutti i metodi getter e setter per ogni attributo.
+Nel package \texttt{main.DomainModel} sono implementate le classi che rappresentano le entità del dominio applicativo del sistema di car sharing universitario e  l'implementazione segue la descrizione fornita in sez \ref{subsec:DM}. Ogni classe implementa tutti i metodi getter e setter per ogni attributo.
 In tutte le classi è presente un attributo \texttt{int id} che mantiene un intero che identifica quell'oggetto.\\
-Da notare come, data l'implementazione del database (vedi sez \ref{subsec:DBimpl}), in tutte le classi tranne User sono implementati almeno due costruttori: uno per oggetti nuovi non ancora presenti nel database (e quindi senza id perché verrà generato automaticamente), e uno invece standard.
-\begin{lstlisting}[style=java, caption={Esempio di costruttori della classe Vehicle}]
+Da notare come, data l'implementazione del database (vedi sez \ref{subsec:DBimpl}), in tutte le classi tranne User sono implementati almeno due costruttori: uno per oggetti nuovi non ancora presenti nel database (e quindi senza id che verrà generato automaticamente), e uno invece standard.
+\begin{lstlisting}[style=java, caption={Esempio di costruttori della classe \texttt{Vehicle}}]
 public Vehicle(int id, int capacity, VehicleState state) {
         this.id = id;
         this.capacity = capacity;
@@ -71,7 +71,7 @@ public Vehicle(int id, int capacity, VehicleState state) {
     }
 // constructor for new vehicles (id will be set by the database)
 public Vehicle(int capacity, VehicleState state, Location location) {
-    this.id = 0;
+    this.id = 0; // id will be set by the database
     this.capacity = capacity;
     this.state = state;
     this.location = location;
@@ -102,7 +102,7 @@ La classe \texttt{Trip} modella i viaggi creati dagli utenti con patente. Contie
 \item Origine e destinazione (oggetti \texttt{Location})
 \item Data e ora di partenza
 \item Conducente e veicolo assegnati
-\item Stato del viaggio (SCHEDULED, ONGOING, COMPLETED, CANCELED)
+\item Stato del viaggio
 \end{itemize}
 Per la data e l'ora abbiamo scelto rispettivamente \texttt{java.sql.Date} e \texttt{java.sql.Time} che ci ha permesso poi nei DAO di non aver problemi.
 La classe \texttt{Trip} rappresenta la classe più importante dopo \texttt{User} perché lega tutti i vari concetti insieme e rappresenta il centro del sistema di car sharing.
@@ -113,8 +113,6 @@ La classe \texttt{Booking} rappresenta le prenotazioni degli studenti per i viag
     \item \texttt{Trip trip}: viaggio a cui è associata la prenotazione
     \item \texttt{BookingState state}: lo stato della prenotazione
 \end{itemize}
-è stato deciso di non mettere data e orario del viaggio a cui è associata la prenotazione perché sono informazioni che si possono estrarre dall'attributo \texttt{trip}.
-
 \subsection{Object-Relational Mapping}
 Nel package \texttt{main.ORM} sono implementate le classi DAO che gestiscono la persistenza dei dati e l'interazione con il database PostgreSQL.
 \subsubsection{ConnectionManager}
@@ -136,8 +134,8 @@ public static Connection getConnection() throws SQLException {
     return connection;
 }
 \end{lstlisting}
-Come si nota dalla definizione, questa classe implementa il pattern \textit{Singleton}, garantendo che esista una sola istanza condivisa di \texttt{ConnectionManager} in tutta l'applicazione. In questo modo tutti i DAO utilizzano la stessa connessione al database, semplificando la gestione delle risorse e riducendo il rischio di apertura simultanea di troppe connessioni. Il costruttore privato impedisce la creazione di istanze multiple, mentre il metodo statico \texttt{getInstance()} fornisce l'accesso globale all'unica istanza disponibile.
-\paragraph{DAO} Per creare le connesioni nei DAO abbiamo deciso di usare il costrutto di java \textit{try-with-resources} perché garantisce la chiusura sicura dello statment anche in caso di eccezione, senza necessità di dover scrivere un blocco \texttt{finally} dove si chiude.
+Come si nota dalla definizione, questa classe implementa il pattern \textit{Singleton}, garantendo che esista una sola istanza di \texttt{ConnectionManager} in tutta l'applicazione tramite il costruttore privato ed il metodo statico \texttt{getInstance()} che fornisce accesso globale all'unica istanza. La connessione al database viene gestita in modo centralizzato, evitando la creazione di connessioni multiple e riducendo il sovraccarico di risorse.
+\paragraph{DAO} Per creare le connessoni nei DAO abbiamo deciso di adottare il costrutto di java \textit{try-with-resources} che garantisce la chiusura automatica degli \texttt{PreparedStatement} anche in caso di eccezione, senza necessità di chiuderli esplicitamente in un un blocco \texttt{finally}.
 \begin{lstlisting}[style=java, caption={Esempio di uso di try-with-resources per la connessione nel metodo insertUser di UserDAO}]
 String insertSQL = "INSERT INTO \"User\" (id, name, surname, email, password, role, license) VALUES (?, ?, ?, ?,?, ?, ?)";
 try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL))
@@ -177,8 +175,8 @@ Grazie a questo durante la sessione è possibile verificare i permessi dell'uten
 Ha il compito di gestione dei viaggi proponendo metodi come \texttt{createTrip, modifyTrip, isFull}. 
 Il metodo \texttt{createTrip} implementa una serie di controlli di validazione prima di creare il viaggio, verificando autenticazione, disponibilità del veicolo e possesso della patente.
 \subsubsection{BookingController}
-Questa classe ha lo scopo di permettere agli utenti di creare prenotazioni (\texttt{createBooking}), modificarle (\texttt{modifyBooking}) o cancellarle con \texttt{cancelBooking}. Per la cancellazione abbiamo deciso che inizialmente le prenotazioni rimangono salvate nel database modificando però modificato lo stato; sarà poi l'admin a decidere se rimuoverle completamente con \texttt{removeBooking}
-\begin{lstlisting}[style=Java, caption={Cancellazione e rimozione di una Prenotazione}]
+Questa classe ha lo scopo di permettere agli utenti di creare prenotazioni (\texttt{createBooking}), modificarle (\texttt{modifyBooking}) o cancellarle con \texttt{cancelBooking}. Per la cancellazione abbiamo deciso che inizialmente le prenotazioni rimangono salvate nel database modificando però il loro stato a \texttt{CANCELED}; sarà poi l'admin a decidere se rimuoverle completamente con \texttt{removeBooking}
+\begin{lstlisting}[style=Java, caption={Cancellazione e rimozione di una Prenotazione in \texttt{BookingController}}]
     public boolean cancelBooking(int bookingId) {
         try {
             Booking booking = bookingDAO.findBookingByID(bookingId);
