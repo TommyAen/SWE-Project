@@ -60,6 +60,13 @@ public class AuthController {
         else return currentUser;
     }
 
+    public int getCurrentUserId() {
+        if (!isLoggedIn()) {
+            throw new IllegalStateException("No user is currently logged in.");
+        }
+        else return currentUser.getId();
+    }
+
     public void setCurrentUser(User currentUser) {
         if (!isLoggedIn()) {
             throw new IllegalStateException("No user is currently logged in.");

@@ -21,9 +21,9 @@ public class UserController {
     public void register(int user_id,String name, String surname, String email, String password, String license,User.UserRole role) throws SQLException { // riceve i dati da interfaccia utente
         authController.validateCredentials(email, password);
 
-//        try(User user =  userDAO.findUserByEmail(email) != null) {
-//            throw new IllegalArgumentException("Email already in use");
-//        }
+        if(userDAO.findUserByEmail(email) != null) {
+            throw new IllegalArgumentException("Email already in use");
+        }
         User user = new User(user_id, name, surname, email,password, license, role);
         if (user.getRole().equals(User.UserRole.STUDENT)) userDAO.insertStudent(user);
         else if (user.getRole().equals(User.UserRole.ADMIN)) userDAO.insertAdmin(user);
@@ -36,23 +36,21 @@ public class UserController {
         if (!authController.isLoggedIn()) {
             throw new IllegalStateException("No user is currently logged in.");
         }
-        userDAO.removeUserByEmail(authController.getCurrentUser().getEmail()); // FIXME: cascata su bookings e licenses?
+        // TODO: check if user is drivers for some trips
+        userDAO.removeUserByEmail(authController.getCurrentUser().getEmail()); // all informations will be deleted cascade (even bookings)
         authController.logout();
     }
     public void deleteProfile(int userId) throws SQLException {
-        if (!authController.isLoggedIn() || !authController.isCurrentUserAdmin()) {
+        if (!authController.isCurrentUserAdmin()) {
             throw new IllegalStateException("Current user is not logged in or not an admin.");
         }
-        userDAO.removeUserByID(userId); //
-    } // TODO: forse da mettere in AdminController???
+        userDAO.removeUserByID(userId); // TODO: check if user is drivers for some trips
+    }
 
     public void viewProfile(){
         System.out.print(authController.getCurrentUser());
     }
-
-
-    // FIXME: License: forse da mettere in LicenseService/DriverController???
-    public boolean hasLicense(int user_id) throws SQLException { // TODO: forse da mettere in Admin
+    public boolean hasLicense(int user_id) throws SQLException {
         return userDAO.hasLicense(user_id);
         }
     public void addLicense(String license_num) throws SQLException {
@@ -79,9 +77,5 @@ public class UserController {
             return false;
         }
     }
-
-    public boolean verifyPassword(String password){ return false; } // TODO ?
-    public boolean verifyUserRole(User.UserRole role){ return false; } // TODO ?
-
 }
 

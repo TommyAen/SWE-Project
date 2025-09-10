@@ -21,26 +21,29 @@ public class BookingController {
         this.authController = authController;
     }
 
+    public BookingController(AuthController authController, BookingDAO bookingDAO, TripController tripController) {
+        this.bookingDAO = bookingDAO;
+        this.tripController = tripController;
+        this.authController = authController;
+    }
+
+
     // Create a new booking
-    public boolean createBooking(int tripID) {
+    public void createBooking(int tripID) {
         try {
             if (!authController.isLoggedIn()) {
                 System.err.println("User must be logged in to create a booking.");
-                return false;
             }
 
             Trip trip = tripController.findById(tripID);
             if (tripController.isFull(trip)) {
                 System.err.println("Trip is full.");
-                return false;
             }
 
             Booking newBooking = new Booking(authController.getCurrentUser(), Booking.BookingState.PENDING, trip);
             bookingDAO.insertBooking(newBooking);
-            return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
     }
 

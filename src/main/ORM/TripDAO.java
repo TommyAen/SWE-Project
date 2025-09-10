@@ -135,7 +135,7 @@ public class TripDAO {
             preparedStatement.setInt(8, oldTrip.getId());
             preparedStatement.executeUpdate();
         }
-    } // TODO: forse era meglio passare direttamente i parametri che servono, invece di due oggetti Trip
+    }
 
     // Update Methods
     public void updateTripDate(int trip_id, Date newDate) throws SQLException {
@@ -174,7 +174,7 @@ public class TripDAO {
     public int getSeatsForTrip(int tripId) throws SQLException {
         Trip trip = findById(tripId);
         Vehicle vehicle = trip.getVehicle();
-        if (vehicle != null) return vehicle.getCapacity();
+        if (vehicle != null) return vehicle.getCapacity() - getBookingsForTrip(tripId).size();
         else return 0; // TODO: gestire errore
     }
 
@@ -183,6 +183,23 @@ public class TripDAO {
         String sql = "DELETE FROM trip";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.executeUpdate();
+        }
+    }
+
+    public List<Trip> findTripsInDateRange(Date startDate, Date endDate) {
+        String selectSQL = "SELECT * FROM trip WHERE date BETWEEN ? AND ? ORDER BY date, time";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+            preparedStatement.setDate(1, startDate);
+            preparedStatement.setDate(2, endDate);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Trip> trips = new ArrayList<>();
+            while (resultSet.next()) {
+                Trip trip = getTripFromResultSet(resultSet);
+                trips.add(trip);
+            }
+            return trips;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

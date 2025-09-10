@@ -9,16 +9,17 @@ import java.util.List;
 public class AdminController {
 
     private UserDAO userDAO;
-    private BookingDAO bookingDAO;
-    private TripDAO tripDAO;
+    private BookingController bookingController;
+    private TripController tripController;
     private AuthController authController;
 
-    public AdminController(AuthController authController) {
-        this.userDAO = new UserDAO();
-        this.bookingDAO = new BookingDAO();
-        this.tripDAO = new TripDAO();
+    public AdminController(AuthController authController, UserDAO userDAO, BookingController bookingDAO, TripController tripDAO) {
+        this.userDAO = userDAO;
+        this.bookingController = bookingDAO;
+        this.tripController = tripDAO;
         this.authController = authController;
     }
+
 
     public void removeUser(int userId) throws SQLException {
         if (authController.isLoggedIn() && authController.getCurrentUser().isAdmin()) {

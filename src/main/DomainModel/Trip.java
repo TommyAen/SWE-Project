@@ -58,13 +58,11 @@ public class Trip {
     public TripState getState() { return state; }
     public void setState(TripState state) { this.state = state; }
 
-
-
-
     @Override
     public String toString() {
-        return "Trip{id=" + id + ", starting from=" + origin +
-                ", to=" + destination + ", date=" + date +
-                ", time=" + time + ", driver=" + driver + "}";
+        return "Trip n." + id + ", starting from " + origin.getName() +
+                ", arriving to " + destination.getName() + ", in date " + date +
+                ",  at " + time + ".";
     }
+
 }
