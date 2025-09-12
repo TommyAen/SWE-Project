@@ -51,12 +51,6 @@ INSERT INTO Location (name, address) VALUES
 ('Facolta di Ingegneria', 'Via Santa Marta, 3, 50139 Firenze FI'),
  ('Centro Didattico Morgagni', 'Viale Morgagni, 65, 50134 Firenze FI'),
 \end{lstlisting}
-\begin{lstlisting}[style=sql, caption={Esempio inserimento dati di default per le location}]
-INSERT INTO Location (name, address) VALUES
-('Rettorato - UNIFI', 'Piazza San Marco, 4, 50121 Firenze FI'),
-('Facolt@ di Ingegneria', 'Via Santa Marta, 3, 50139 Firenze FI'),
- ('Centro Didattico Morgagni', 'Viale Morgagni, 65, 50134 Firenze FI'),
-\end{lstlisting}
 
 \subsection{Domain Model}
 Nel package \texttt{main.DomainModel} sono implementate le classi che rappresentano le entità del dominio applicativo del sistema di car sharing universitario e  l'implementazione segue la descrizione fornita in sez \ref{subsec:DM}. Ogni classe implementa tutti i metodi getter e setter per ogni attributo.
