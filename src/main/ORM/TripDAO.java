@@ -105,7 +105,7 @@ public class TripDAO {
     }
 
     public List<Trip> findByDriver(int driverId) throws SQLException {
-        String selectSQL = "SELECT * FROM trip WHERE driver_id = " + driverId;
+        String selectSQL = "SELECT * FROM trip WHERE driver = " + driverId;
         return getTripsFromQuery(selectSQL);
     }
 
@@ -115,7 +115,7 @@ public class TripDAO {
     }
 
     public List<Booking> getBookingsForTrip(int tripId) throws SQLException {
-        String selectSQL = "SELECT * FROM booking WHERE trip_id = " + tripId;
+        String selectSQL = "SELECT * FROM booking WHERE trip = " + tripId;
         BookingDAO bookingDAO = new BookingDAO();
         return bookingDAO.getBookingsFromQuery(selectSQL);
     }

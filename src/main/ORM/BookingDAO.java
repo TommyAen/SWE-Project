@@ -83,7 +83,7 @@ public class BookingDAO {
     }
 
     public List<Booking> findBookingsByUserID(int userId) throws SQLException {
-        String selectSQL = "SELECT * FROM booking WHERE user = " + userId;
+        String selectSQL = "SELECT * FROM booking WHERE user_id = " + userId;
         return getBookingsFromQuery(selectSQL);
     }
 
